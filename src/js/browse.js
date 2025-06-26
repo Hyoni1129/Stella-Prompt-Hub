@@ -291,20 +291,39 @@ class PromptBrowser {
 
     extractTags(content) {
         const tags = new Set();
-        const contentLower = content.toLowerCase();
 
-        // Common tag patterns
-        const tagPatterns = [
-            'writing', 'creative', 'technical', 'analysis', 'data', 'code', 'review',
-            'story', 'documentation', 'meeting', 'facilitation', 'productivity',
-            'collaboration', 'planning', 'strategy', 'communication', 'leadership'
-        ];
+        // First, try to extract manual tags from ## Tags section
+        const tagSectionMatch = content.match(/^## Tags?\s*\n([\s\S]*?)(?=\n## |\n# |$)/mi);
+        if (tagSectionMatch) {
+            const tagSection = tagSectionMatch[1];
+            // Extract tags from list format (- tag) or comma-separated
+            const manualTags = tagSection
+                .replace(/-\s*/g, '') // Remove list markers
+                .split(/[,\n]/) // Split by comma or newline
+                .map(tag => tag.trim().toLowerCase())
+                .filter(tag => tag && tag.length > 0);
 
-        tagPatterns.forEach(pattern => {
-            if (contentLower.includes(pattern)) {
-                tags.add(pattern);
-            }
-        });
+            manualTags.forEach(tag => tags.add(tag));
+        }
+
+        // If no manual tags found, fall back to automatic detection
+        if (tags.size === 0) {
+            const contentLower = content.toLowerCase();
+
+            // Common tag patterns for automatic detection
+            const tagPatterns = [
+                'writing', 'creative', 'technical', 'analysis', 'data', 'code', 'review',
+                'story', 'documentation', 'meeting', 'facilitation', 'productivity',
+                'collaboration', 'planning', 'strategy', 'communication', 'leadership',
+                'brainstorming', 'design', 'development', 'debugging', 'architecture'
+            ];
+
+            tagPatterns.forEach(pattern => {
+                if (contentLower.includes(pattern)) {
+                    tags.add(pattern);
+                }
+            });
+        }
 
         return Array.from(tags).slice(0, 5); // Limit to 5 tags
     }

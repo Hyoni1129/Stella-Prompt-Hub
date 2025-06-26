@@ -63,14 +63,22 @@ Stella Prompt Hub is a **fully automated static web interface** for browsing and
 
 ## 🚀 Quick Start
 
-### Option 1: Use as Template (Recommended)
+### 👀 **For Users** (Just Browse Prompts)
+
+**🌐 Simply visit**: [https://hyoni1129.github.io/Stella-Prompt-Hub/](https://hyoni1129.github.io/Stella-Prompt-Hub/)
+
+**No installation needed!** Browse, copy, and use prompts directly from your browser.
+
+### ✍️ **For Contributors** (Add Your Own Prompts)
+
+#### Option 1: Use as Template (Recommended)
 
 1. **Click "Use this template"** on GitHub
 2. **Enable GitHub Pages** in repository settings
 3. **Add your prompts** to the `prompts/` directory
 4. **Visit your site** at `https://yourusername.github.io/Stella-Prompt-Hub`
 
-### Option 2: Fork and Clone
+#### Option 2: Fork and Clone
 
 ```bash
 # Clone the repository
@@ -114,7 +122,7 @@ Your detailed prompt content here...
 - Example 1: How to use this prompt
 - Example 2: Another use case
 
-## Tags
+## Tags (Optional)
 - productivity
 - writing
 - analysis
@@ -137,9 +145,10 @@ The system automatically extracts:
 - **Title**: From the first H1 heading
 - **Description**: From the first paragraph  
 - **Category**: Inferred from content keywords
-- **Tags**: From a "Tags" section (if present)
+- **Tags**: From "## Tags" section (manual) or auto-detected from content
 - **Word Count**: Automatically calculated
 - **Reading Time**: Estimated based on content length
+- **Difficulty**: Inferred from content complexity
 
 ---
 

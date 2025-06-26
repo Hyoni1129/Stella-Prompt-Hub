@@ -10,10 +10,11 @@ The beauty of this project is its simplicity - no complex setup required!
 
 1. **Fork** this repository
 2. **Create** a new `.md` file in the `prompts/` directory
-3. **Add** your filename to the list in `src/js/browse.js`
-4. **Submit** a pull request
+3. **That's it!** Your prompt will automatically appear on the website
 
 👉 **Detailed guide**: [How to Add New Prompts](docs/ADD_NEW_PROMPTS.md)
+
+**✨ No manual configuration needed!** The system automatically discovers your Markdown files using GitHub API.
 
 ### Contributing Code
 
@@ -71,7 +72,20 @@ Your detailed prompt instructions...
 
 ## Examples
 Practical usage examples...
+
+## Tags (Optional)
+- productivity
+- writing
+- collaboration
+- strategy
 ```
+
+**Auto-Discovery Features:**
+- ✅ **Title**: Extracted from first H1 heading
+- ✅ **Description**: From first paragraph
+- ✅ **Category**: Auto-inferred from content
+- ✅ **Tags**: Manual (from ## Tags section) or auto-detected
+- ✅ **Reading Time**: Auto-calculated
 
 **File Naming:**
 - Use kebab-case: `prompt-name.md`
@@ -221,19 +235,19 @@ By contributing to Stella Open Prompt, you agree that your contributions will be
 
 ## Quick Reference
 
-### Adding a New Prompt (5-minute process)
+### Adding a New Prompt (2-minute process)
 
 1. **Create file**: `prompts/your-prompt-name.md`
 2. **Add content**: Follow the template structure
-3. **Update list**: Add filename to `src/js/browse.js`
-4. **Test**: Run locally to verify
-5. **Submit**: Create pull request
+3. **Done!** Your prompt automatically appears on the website
+
+**🚀 Zero configuration needed!** The GitHub API automatically discovers and indexes your new prompts.
 
 ### Project Structure
 ```
 Stella-Prompt-Hub/
-├── prompts/                 # 👈 Add your .md files here
-├── src/js/browse.js        # 👈 Update availablePrompts list
+├── prompts/                 # 👈 Add your .md files here (auto-discovered!)
+├── src/js/browse.js        # 👈 Handles automatic prompt discovery
 ├── browse.html             # Main interface
 ├── prompt-reader.html      # Individual prompt viewer
 └── docs/                   # Documentation
