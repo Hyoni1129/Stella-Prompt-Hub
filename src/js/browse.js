@@ -25,6 +25,9 @@ class PromptBrowser {
         this.setupEventListeners();
         await this.discoverPrompts();
         await this.loadPrompts();
+
+        // Only render after prompts are fully loaded
+        console.log('Prompts loaded, starting render. Prompts:', this.prompts);
         this.renderPrompts();
         this.updateCounts();
         this.initializeAnimations();
@@ -187,15 +190,20 @@ class PromptBrowser {
     async loadPrompts() {
         try {
             this.prompts = [];
+            console.log('Loading prompts from files:', this.availablePrompts);
 
             // Load each prompt file and extract metadata from the markdown
             for (const filename of this.availablePrompts) {
                 try {
+                    console.log('Loading file:', filename);
                     const response = await fetch(`prompts/${filename}`);
                     if (response.ok) {
                         const content = await response.text();
                         const prompt = this.parseMarkdownPrompt(filename, content);
+                        console.log('Parsed prompt:', prompt);
                         this.prompts.push(prompt);
+                    } else {
+                        console.warn(`Failed to load ${filename}:`, response.status);
                     }
                 } catch (error) {
                     console.warn(`Could not load ${filename}:`, error);
@@ -203,6 +211,7 @@ class PromptBrowser {
                 }
             }
 
+            console.log('All prompts loaded:', this.prompts);
             this.filteredPrompts = [...this.prompts];
 
             // Generate categories from loaded prompts
@@ -210,6 +219,7 @@ class PromptBrowser {
 
         } catch (error) {
             console.error('Error loading prompts:', error);
+            console.log('Falling back to fallback data...');
             this.loadFallbackData();
         }
     }
@@ -249,9 +259,11 @@ class PromptBrowser {
             title,
             category,
             description,
+            content: description, // Add content field
             tags,
             difficulty: this.inferDifficulty(content),
-            readTime: `${readTime} min`,
+            readingTime: `${readTime} min`, // Changed from readTime to readingTime
+            wordCount, // Add wordCount
             lastUpdated: new Date().toISOString().split('T')[0], // Today's date as fallback
             featured: false,
             filename
@@ -326,15 +338,18 @@ class PromptBrowser {
     }
 
     loadFallbackData() {
+        console.log('Loading fallback data...');
         // Minimal fallback if no prompts can be loaded
         this.prompts = [{
             id: 'sample-prompt',
-            title: 'Welcome to Stella Open Prompt',
+            title: 'Welcome to Stella Prompt Hub',
             category: 'general',
             description: 'This is a sample prompt. Add your own Markdown files to the prompts/ directory to see them here.',
+            content: 'This is a sample prompt to demonstrate the interface. Add your own Markdown files to the prompts/ directory to see them here.',
             tags: ['sample', 'welcome'],
             difficulty: 'Beginner',
-            readTime: '1 min',
+            readingTime: '1 min',
+            wordCount: 25,
             lastUpdated: new Date().toISOString().split('T')[0],
             featured: true,
             filename: 'sample.md'
@@ -376,6 +391,10 @@ class PromptBrowser {
 
         noResults.style.display = 'none';
 
+        // Debug: Check what we're trying to render
+        console.log('Filtered prompts to render:', this.filteredPrompts);
+        console.log('First prompt type:', typeof this.filteredPrompts[0]);
+
         // Render prompt cards
         grid.innerHTML = this.filteredPrompts.map(prompt => this.createPromptCard(prompt)).join('');
 
@@ -387,14 +406,20 @@ class PromptBrowser {
     }
 
     createPromptCard(prompt) {
+        // Validate that prompt is an object, not a string
+        if (typeof prompt === 'string') {
+            console.error('Prompt is a string, not an object:', prompt);
+            return ''; // Return empty string to avoid breaking the map
+        }
+
         // Validate and provide fallbacks for all fields
         const id = prompt.id || prompt.filename || 'unknown';
         const title = prompt.title || 'Untitled Prompt';
         const description = prompt.description || 'No description available';
         const category = prompt.category || 'other';
-        const content = prompt.content || description;
-        const truncatedContent = content.length > 150 ? content.substring(0, 150) + '...' : content;
-        const readingTime = prompt.readingTime || '5 min read';
+        const content = prompt.content || prompt.description || 'No content available';
+        const truncatedContent = content && content.length > 150 ? content.substring(0, 150) + '...' : (content || 'No preview available');
+        const readingTime = prompt.readingTime || prompt.readTime || '5 min';
         const wordCount = prompt.wordCount || 0;
         const difficulty = prompt.difficulty || 'intermediate';
 
