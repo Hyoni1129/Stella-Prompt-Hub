@@ -1,0 +1,153 @@
+{
+  "categories": [
+    {
+      "id": "coding",
+      "name": "Coding & Development",
+      "description": "Prompts for software development, debugging, code review, and technical problem-solving",
+      "color": "#4338ca",
+      "icon": "code"
+    },
+    {
+      "id": "writing",
+      "name": "Writing & Content",
+      "description": "Prompts for creative writing, technical documentation, and content creation",
+      "color": "#059669",
+      "icon": "edit"
+    },
+    {
+      "id": "analysis",
+      "name": "Analysis & Research",
+      "description": "Prompts for data analysis, research methodology, and critical thinking",
+      "color": "#dc2626",
+      "icon": "chart"
+    },
+    {
+      "id": "creative",
+      "name": "Creative & Innovation",
+      "description": "Prompts for creative thinking, brainstorming, and innovative problem-solving",
+      "color": "#7c3aed",
+      "icon": "lightbulb"
+    }
+  ],
+  "allPrompts": [
+    {
+      "id": "code-review-assistant",
+      "title": "Code Review Assistant",
+      "description": "A comprehensive prompt for conducting thorough code reviews with security, performance, and maintainability focus.",
+      "category": "coding",
+      "tags": ["code-review", "security", "performance", "best-practices"],
+      "difficulty": "Intermediate",
+      "lastUpdated": "2024-01-15",
+      "featured": true,
+      "readTime": "8 min",
+      "popularity": 95
+    },
+    {
+      "id": "debugging-expert",
+      "title": "Debugging Expert",
+      "description": "Step-by-step debugging approach for identifying and fixing complex software issues.",
+      "category": "coding",
+      "tags": ["debugging", "troubleshooting", "problem-solving"],
+      "difficulty": "Advanced",
+      "lastUpdated": "2024-01-12",
+      "featured": false,
+      "readTime": "12 min",
+      "popularity": 87
+    },
+    {
+      "id": "api-design-guide",
+      "title": "API Design Guide",
+      "description": "Best practices for designing RESTful APIs with proper documentation and error handling.",
+      "category": "coding",
+      "tags": ["api", "rest", "design", "documentation"],
+      "difficulty": "Intermediate",
+      "lastUpdated": "2024-01-10",
+      "featured": true,
+      "readTime": "10 min",
+      "popularity": 91
+    },
+    {
+      "id": "technical-writer",
+      "title": "Technical Writing Assistant",
+      "description": "Create clear, comprehensive technical documentation with proper structure and examples.",
+      "category": "writing",
+      "tags": ["documentation", "technical-writing", "clarity"],
+      "difficulty": "Beginner",
+      "lastUpdated": "2024-01-14",
+      "featured": true,
+      "readTime": "15 min",
+      "popularity": 92
+    },
+    {
+      "id": "blog-content-creator",
+      "title": "Blog Content Creator",
+      "description": "Generate engaging blog posts with SEO optimization and reader engagement strategies.",
+      "category": "writing",
+      "tags": ["blogging", "seo", "content-marketing"],
+      "difficulty": "Intermediate",
+      "lastUpdated": "2024-01-11",
+      "featured": false,
+      "readTime": "7 min",
+      "popularity": 84
+    },
+    {
+      "id": "data-analyst",
+      "title": "Data Analysis Expert",
+      "description": "Comprehensive data analysis with statistical insights and visualization recommendations.",
+      "category": "analysis",
+      "tags": ["data-analysis", "statistics", "visualization"],
+      "difficulty": "Advanced",
+      "lastUpdated": "2024-01-13",
+      "featured": true,
+      "readTime": "14 min",
+      "popularity": 89
+    },
+    {
+      "id": "market-researcher",
+      "title": "Market Research Specialist",
+      "description": "Conduct thorough market research with competitive analysis and trend identification.",
+      "category": "analysis",
+      "tags": ["market-research", "competitive-analysis", "trends"],
+      "difficulty": "Intermediate",
+      "lastUpdated": "2024-01-09",
+      "featured": false,
+      "readTime": "11 min",
+      "popularity": 78
+    },
+    {
+      "id": "creative-brainstormer",
+      "title": "Creative Brainstorming Assistant",
+      "description": "Generate innovative ideas using structured creative thinking methodologies.",
+      "category": "creative",
+      "tags": ["brainstorming", "creativity", "innovation"],
+      "difficulty": "Beginner",
+      "lastUpdated": "2024-01-16",
+      "featured": true,
+      "readTime": "12 min",
+      "popularity": 88
+    },
+    {
+      "id": "design-thinking-coach",
+      "title": "Design Thinking Coach",
+      "description": "Guide through the design thinking process from empathy to testing.",
+      "category": "creative",
+      "tags": ["design-thinking", "user-experience", "problem-solving"],
+      "difficulty": "Intermediate",
+      "lastUpdated": "2024-01-08",
+      "featured": false,
+      "readTime": "16 min",
+      "popularity": 82
+    }
+  ],
+  "stats": {
+    "totalPrompts": 9,
+    "totalCategories": 4,
+    "averageRating": 4.7,
+    "totalDownloads": 15420
+  },
+  "meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-16",
+    "dataFormat": "json"
+  }
+}

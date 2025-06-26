@@ -1,0 +1,29 @@
+{
+  "category": "analysis",
+  "name": "Analysis & Research",
+  "description": "Prompts for data analysis, research methodology, and critical thinking",
+  "prompts": [
+    {
+      "id": "data-analyst",
+      "title": "Data Analysis Expert",
+      "description": "Comprehensive data analysis with statistical insights and visualization recommendations.",
+      "file": "data-analyst.md",
+      "tags": ["data-analysis", "statistics", "visualization"],
+      "difficulty": "Advanced",
+      "category": "analysis",
+      "lastUpdated": "2024-01-13",
+      "featured": true
+    },
+    {
+      "id": "market-researcher",
+      "title": "Market Research Specialist",
+      "description": "Conduct thorough market research with competitive analysis and trend identification.",
+      "file": "market-researcher.md",
+      "tags": ["market-research", "competitive-analysis", "trends"],
+      "difficulty": "Intermediate",
+      "category": "analysis",
+      "lastUpdated": "2024-01-09",
+      "featured": false
+    }
+  ]
+}

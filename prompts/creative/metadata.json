@@ -1,0 +1,29 @@
+{
+  "category": "creative",
+  "name": "Creative & Innovation",
+  "description": "Prompts for creative thinking, brainstorming, and innovative problem-solving",
+  "prompts": [
+    {
+      "id": "creative-brainstormer",
+      "title": "Creative Brainstorming Assistant",
+      "description": "Generate innovative ideas using structured creative thinking methodologies.",
+      "file": "creative-brainstormer.md",
+      "tags": ["brainstorming", "creativity", "innovation"],
+      "difficulty": "Beginner",
+      "category": "creative",
+      "lastUpdated": "2024-01-16",
+      "featured": true
+    },
+    {
+      "id": "design-thinking-coach",
+      "title": "Design Thinking Coach",
+      "description": "Guide through the design thinking process from empathy to testing.",
+      "file": "design-thinking-coach.md",
+      "tags": ["design-thinking", "user-experience", "problem-solving"],
+      "difficulty": "Intermediate",
+      "category": "creative",
+      "lastUpdated": "2024-01-08",
+      "featured": false
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "category": "coding",
+  "name": "Coding & Development",
+  "description": "Prompts for software development, debugging, code review, and technical problem-solving",
+  "prompts": [
+    {
+      "id": "code-review-assistant",
+      "title": "Code Review Assistant",
+      "description": "A comprehensive prompt for conducting thorough code reviews with security, performance, and maintainability focus.",
+      "file": "code-review-assistant.md",
+      "tags": ["code-review", "security", "performance", "best-practices"],
+      "difficulty": "Intermediate",
+      "category": "coding",
+      "lastUpdated": "2024-01-15",
+      "featured": true
+    },
+    {
+      "id": "debugging-expert",
+      "title": "Debugging Expert",
+      "description": "Step-by-step debugging approach for identifying and fixing complex software issues.",
+      "file": "debugging-expert.md",
+      "tags": ["debugging", "troubleshooting", "problem-solving"],
+      "difficulty": "Advanced",
+      "category": "coding",
+      "lastUpdated": "2024-01-12",
+      "featured": false
+    },
+    {
+      "id": "api-design-guide",
+      "title": "API Design Guide",
+      "description": "Best practices for designing RESTful APIs with proper documentation and error handling.",
+      "file": "api-design-guide.md",
+      "tags": ["api", "rest", "design", "documentation"],
+      "difficulty": "Intermediate",
+      "category": "coding",
+      "lastUpdated": "2024-01-10",
+      "featured": true
+    }
+  ]
+}
