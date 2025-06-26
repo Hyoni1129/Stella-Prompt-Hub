@@ -62,6 +62,21 @@ class PromptReader {
         document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
             this.toggleSidebar();
         });
+
+        // Sidebar overlay click to close
+        document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+            this.closeSidebar();
+        });
+
+        // Back to top button
+        document.getElementById('back-to-top')?.addEventListener('click', () => {
+            this.scrollToTop();
+        });
+
+        // Show/hide back to top button on scroll
+        window.addEventListener('scroll', () => {
+            this.toggleBackToTopButton();
+        });
     }
 
     setupIntersectionObserver() {
@@ -259,13 +274,29 @@ class PromptReader {
 
     generateTOC() {
         const contentContainer = document.getElementById('prompt-content');
-        const headers = contentContainer.querySelectorAll('h1, h2, h3');
-        const tocContainer = document.getElementById('toc-nav'); // Changed from 'toc-list' to 'toc-nav'
+        const headers = contentContainer.querySelectorAll('h1, h2, h3, h4');
+        const tocContainer = document.getElementById('toc-nav');
 
         this.tocItems = [];
-        if (tocContainer) {
-            tocContainer.innerHTML = '';
+        if (!tocContainer) return;
+
+        // Clear existing TOC and create a clean structure
+        tocContainer.innerHTML = '';
+        
+        if (headers.length === 0) {
+            // Show empty state message
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'toc-empty-state';
+            emptyMessage.innerHTML = `
+                <div class="toc-empty-icon">📄</div>
+                <p>No headings found in this document.</p>
+            `;
+            tocContainer.appendChild(emptyMessage);
+            return;
         }
+        
+        const tocList = document.createElement('ul');
+        tocContainer.appendChild(tocList);
 
         headers.forEach((header) => {
             const id = this.createSlug(header.textContent);
@@ -281,19 +312,26 @@ class PromptReader {
 
             this.tocItems.push(tocItem);
 
-            // Create TOC link only if container exists
-            if (tocContainer) {
-                const tocLink = document.createElement('a');
-                tocLink.href = `#${id}`;
-                tocLink.className = `toc-link toc-level-${level}`;
-                tocLink.textContent = header.textContent;
-                tocLink.setAttribute('data-section', id);
+            // Create TOC link with proper hierarchy classes
+            const tocLink = document.createElement('a');
+            tocLink.href = `#${id}`;
+            tocLink.className = `toc-link toc-h${level}`;
+            tocLink.textContent = header.textContent;
+            tocLink.setAttribute('data-section', id);
 
-                const tocListItem = document.createElement('li');
-                tocListItem.appendChild(tocLink);
-                tocContainer.appendChild(tocListItem);
-            }
+            // Add smooth scroll behavior
+            tocLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.scrollToSection(`#${id}`);
+            });
+
+            const tocListItem = document.createElement('li');
+            tocListItem.appendChild(tocLink);
+            tocList.appendChild(tocListItem);
         });
+
+        // Observe all sections for active state tracking
+        this.observeSections();
     }
 
     setupSyntaxHighlighting() {
@@ -331,6 +369,35 @@ class PromptReader {
         const activeLink = document.querySelector(`[data-section="${sectionId}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
+            
+            // Scroll the active TOC item into view if it's outside the visible area
+            this.scrollTOCToActiveItem(activeLink);
+        }
+    }
+
+    scrollTOCToActiveItem(activeLink) {
+        const tocContainer = document.getElementById('toc-nav');
+        const sidebarContent = document.querySelector('.sidebar-content');
+        
+        if (!tocContainer || !sidebarContent || !activeLink) return;
+
+        const containerRect = sidebarContent.getBoundingClientRect();
+        const linkRect = activeLink.getBoundingClientRect();
+        
+        // Check if the active link is outside the visible area
+        if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
+            const scrollTop = sidebarContent.scrollTop;
+            const linkOffsetTop = activeLink.offsetTop;
+            const containerHeight = sidebarContent.clientHeight;
+            const linkHeight = activeLink.offsetHeight;
+            
+            // Calculate the new scroll position to center the active item
+            const newScrollTop = linkOffsetTop - (containerHeight / 2) + (linkHeight / 2);
+            
+            sidebarContent.scrollTo({
+                top: Math.max(0, newScrollTop),
+                behavior: 'smooth'
+            });
         }
     }
 
@@ -493,10 +560,16 @@ class PromptReader {
     }
 
     handleKeyNavigation(e) {
-        // Escape key - clear search
+        // ESC key to close sidebar on mobile or clear search
         if (e.key === 'Escape') {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar && sidebar.classList.contains('active')) {
+                this.closeSidebar();
+                return;
+            }
+            
             const searchInput = document.getElementById('content-search');
-            if (searchInput) {
+            if (searchInput && searchInput.value) {
                 searchInput.value = '';
                 this.searchContent('');
             }
@@ -516,6 +589,124 @@ class PromptReader {
             e.preventDefault();
             this.copyToClipboard(window.location.href);
             this.showNotification('Link copied!');
+        }
+
+        // Arrow keys for TOC navigation
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            const activeLink = document.querySelector('.toc-link.active');
+            if (activeLink) {
+                const allLinks = Array.from(document.querySelectorAll('.toc-link'));
+                const currentIndex = allLinks.indexOf(activeLink);
+                
+                let nextIndex;
+                if (e.key === 'ArrowUp') {
+                    nextIndex = currentIndex > 0 ? currentIndex - 1 : allLinks.length - 1;
+                } else {
+                    nextIndex = currentIndex < allLinks.length - 1 ? currentIndex + 1 : 0;
+                }
+                
+                if (allLinks[nextIndex]) {
+                    e.preventDefault();
+                    const targetId = allLinks[nextIndex].getAttribute('data-section');
+                    this.scrollToSection(`#${targetId}`);
+                }
+            }
+        }
+        
+        // Arrow keys for TOC navigation
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            const activeLink = document.querySelector('.toc-link.active');
+            if (activeLink) {
+                const allLinks = Array.from(document.querySelectorAll('.toc-link'));
+                const currentIndex = allLinks.indexOf(activeLink);
+                
+                let nextIndex;
+                if (e.key === 'ArrowUp') {
+                    nextIndex = currentIndex > 0 ? currentIndex - 1 : allLinks.length - 1;
+                } else {
+                    nextIndex = currentIndex < allLinks.length - 1 ? currentIndex + 1 : 0;
+                }
+                
+                if (allLinks[nextIndex]) {
+                    e.preventDefault();
+                    const targetId = allLinks[nextIndex].getAttribute('data-section');
+                    this.scrollToSection(`#${targetId}`);
+                }
+            }
+        }
+    }
+
+    toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar) {
+            const isOpen = sidebar.classList.contains('active');
+            
+            if (isOpen) {
+                this.closeSidebar();
+            } else {
+                this.openSidebar();
+            }
+        }
+    }
+
+    openSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        
+        if (sidebar) {
+            sidebar.classList.add('active');
+            if (overlay) overlay.classList.add('active');
+            
+            // Update accessibility attributes
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', 'true');
+            }
+            
+            // Prevent body scroll on mobile when sidebar is open
+            if (window.innerWidth <= 768) {
+                document.body.style.overflow = 'hidden';
+            }
+        }
+    }
+
+    closeSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        
+        if (sidebar) {
+            sidebar.classList.remove('active');
+            if (overlay) overlay.classList.remove('active');
+            
+            // Update accessibility attributes
+            if (toggleBtn) {
+                toggleBtn.setAttribute('aria-expanded', 'false');
+            }
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+    }
+
+    scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    toggleBackToTopButton() {
+        const backToTopBtn = document.getElementById('back-to-top');
+        if (backToTopBtn) {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
         }
     }
 
@@ -573,20 +764,14 @@ class PromptReader {
     }
 
     updateLayout() {
-        // Handle responsive layout changes
+        // Handle responsive layout updates
+        const windowWidth = window.innerWidth;
         const sidebar = document.querySelector('.sidebar');
-        const content = document.querySelector('.content-area'); // Changed from '.content' to '.content-area'
-
-        if (sidebar && window.innerWidth <= 768) {
-            sidebar.classList.add('mobile');
-        } else if (sidebar) {
-            sidebar.classList.remove('mobile');
-        }
-
-        if (content && window.innerWidth <= 768) {
-            content.classList.add('mobile');
-        } else if (content) {
-            content.classList.remove('mobile');
+        
+        if (windowWidth > 768 && sidebar) {
+            // Reset mobile-specific classes on larger screens
+            this.closeSidebar();
+            document.body.style.overflow = '';
         }
     }
 

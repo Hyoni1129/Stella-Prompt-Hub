@@ -53,12 +53,35 @@
     position: sticky;
     top: 72px;
     height: calc(100vh - 72px);
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     z-index: var(--z-sidebar);
 }
 
 .sidebar-content {
     padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    /* Custom scrollbar for better UX */
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-300) transparent;
+}
+
+.sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400);
 }
 
 /* Document Info */
@@ -124,8 +147,7 @@
 }
 
 .toc-nav {
-    max-height: 300px;
-    overflow-y: auto;
+    position: relative;
 }
 
 .toc-nav ul {
@@ -135,12 +157,13 @@
 }
 
 .toc-nav li {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.125rem;
+    position: relative;
 }
 
 .toc-nav a {
     display: block;
-    padding: 0.5rem 0.75rem;
+    padding: 0.625rem 1rem;
     color: var(--gray-600);
     text-decoration: none;
     border-radius: 0.5rem;
@@ -148,12 +171,18 @@
     line-height: 1.4;
     transition: all var(--transition-smooth);
     border-left: 3px solid transparent;
+    margin-left: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    position: relative;
 }
 
 .toc-nav a:hover {
     background: var(--white);
     color: var(--stella-blue);
     border-left-color: var(--stella-blue);
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
 }
 
 .toc-nav a.active {
@@ -161,20 +190,112 @@
     color: var(--stella-blue);
     border-left-color: var(--stella-blue);
     font-weight: 500;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+}
+
+/* Hierarchical indentation with improved alignment */
+.toc-nav .toc-h1 {
+    padding-left: 1rem;
+    font-weight: 600;
 }
 
 .toc-nav .toc-h2 {
-    padding-left: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.toc-nav .toc-h2::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--gray-400);
+    border-radius: 50%;
+    transition: background var(--transition-smooth);
 }
 
 .toc-nav .toc-h3 {
-    padding-left: 1.5rem;
+    padding-left: 2rem;
     font-size: 0.8125rem;
+    position: relative;
+}
+
+.toc-nav .toc-h3::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 3px;
+    background: var(--gray-400);
+    border-radius: 50%;
+    transition: background var(--transition-smooth);
 }
 
 .toc-nav .toc-h4 {
-    padding-left: 2.25rem;
+    padding-left: 2.5rem;
     font-size: 0.75rem;
+    position: relative;
+}
+
+.toc-nav .toc-h4::before {
+    content: '';
+    position: absolute;
+    left: 1.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 2px;
+    background: var(--gray-400);
+    border-radius: 50%;
+    transition: background var(--transition-smooth);
+}
+
+/* Hover effects for hierarchy indicators */
+.toc-nav .toc-h2:hover::before,
+.toc-nav .toc-h2.active::before {
+    background: var(--stella-blue);
+}
+
+.toc-nav .toc-h3:hover::before,
+.toc-nav .toc-h3.active::before {
+    background: var(--stella-blue);
+}
+
+.toc-nav .toc-h4:hover::before,
+.toc-nav .toc-h4.active::before {
+    background: var(--stella-blue);
+}
+
+/* Empty TOC state */
+.toc-empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--gray-500);
+    border: 2px dashed var(--gray-200);
+    border-radius: 0.5rem;
+    background: var(--gray-50);
+}
+
+.toc-empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
+}
+
+.toc-empty-state p {
+    margin: 0;
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+/* Smooth scrolling for TOC container */
+.toc-nav {
+    scroll-behavior: smooth;
 }
 
 /* Action Panel */
@@ -550,6 +671,32 @@
 .back-to-top:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
+}
+
+/* Sidebar Overlay for Mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-smooth);
+    z-index: calc(var(--z-sidebar) - 1);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (min-width: 769px) {
+    .sidebar-overlay {
+        display: none;
+    }
 }
 
 /* Responsive Design */
