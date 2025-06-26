@@ -103,8 +103,8 @@ Practical usage examples...
 ### Local Development
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/Stella_Open_Prompt.git
-cd Stella_Open_Prompt
+git clone https://github.com/yourusername/Stella-Prompt-Hub.git
+cd Stella-Prompt-Hub
 
 # Start a local server (choose one)
 python3 -m http.server 8000
@@ -231,7 +231,7 @@ By contributing to Stella Open Prompt, you agree that your contributions will be
 
 ### Project Structure
 ```
-Stella_Open_Prompt/
+Stella-Prompt-Hub/
 ├── prompts/                 # 👈 Add your .md files here
 ├── src/js/browse.js        # 👈 Update availablePrompts list
 ├── browse.html             # Main interface
@@ -239,4 +239,4 @@ Stella_Open_Prompt/
 └── docs/                   # Documentation
 ```
 
-Thank you for contributing to Stella Open Prompt! 🌟
+Thank you for contributing to Stella Prompt Hub! 🌟

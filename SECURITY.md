@@ -15,7 +15,7 @@ We take security seriously. If you discover a security vulnerability, please fol
 ### For Security Issues
 
 1. **Do NOT** create a public GitHub issue
-2. Email security concerns to: [Your Security Email]
+2. Email security concerns to: security@stellaprompthub.com (or create a private issue)
 3. Include detailed information about the vulnerability
 4. Allow up to 48 hours for initial response
 
