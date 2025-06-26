@@ -1,4 +1,4 @@
-# 🌟 Stella Prompt Hub
+# 🌟 Stella Open Prompt
 
 ```
  ██████╗ ████████╗███████╗██╗     ██╗      █████╗ 
@@ -8,7 +8,7 @@
 ██████╔╝    ██║   ███████╗███████╗███████╗██║  ██║
 ╚═════╝     ╚═╝   ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
     ╔═══════════════════════════════════════════╗
-    ║            PROMPT HUB                    ║
+    ║          OPEN PROMPT COLLECTION          ║
     ╚═══════════════════════════════════════════╝
 ```
 
@@ -18,11 +18,10 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)]()
 [![Static Site](https://img.shields.io/badge/Static-No%20Server%20Required-brightgreen)]()
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Ready-blue)]()
-[![Auto Discovery](https://img.shields.io/badge/Auto%20Discovery-GitHub%20API-orange)]()
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-blue)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 
-> 🚀 **Fully Automated Static Web Interface** for browsing and reading curated AI prompts. Built with modern web technologies and automatic GitHub integration. **Simply add Markdown files to the `prompts/` folder and they automatically appear on your website!**
+> A world-class, **fully static** web interface for browsing and reading curated AI prompts. Built with Stella's design system, requiring **no server** and working perfectly on GitHub Pages. Add new prompts by simply dropping Markdown files into the `prompts/` folder.
 
 ---
 

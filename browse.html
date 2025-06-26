@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Prompt Collection - Stella</title>
+    <title>Stella Prompt Hub - Browse Prompts</title>
     <meta name="description" content="Discover curated AI prompts to enhance your productivity and creativity. Browse our collection of writing, development, analysis, and creative prompts.">
     
     <!-- Fonts -->
@@ -14,15 +14,23 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/shared.css">
-    <link rel="stylesheet" href="css/browse.css">
-    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="src/css/shared.css">
+    <link rel="stylesheet" href="src/css/browse.css">
+    <link rel="stylesheet" href="src/css/utilities.css">
     
     <!-- Favicon -->
     <link rel="icon" href="Refer/Images/Stella_Icon.png">
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Stella Prompt Hub">
+    <link rel="apple-touch-icon" href="Refer/Images/Stella_Icon.png">
+    
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Open Prompt Collection - Stella">
+    <meta property="og:title" content="Stella Prompt Hub - Browse Prompts">
     <meta property="og:description" content="Discover curated AI prompts to enhance your productivity and creativity.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="Refer/Images/Stella_Icon.png">
@@ -31,17 +39,13 @@
     <!-- Navigation -->
     <nav class="main-nav" id="main-nav">
         <div class="nav-container">
-            <a href="Refer/introduction.html" class="nav-brand">
+            <a href="browse.html" class="nav-brand">
                 <img src="Refer/Images/Stella_Icon.png" alt="Stella Logo" class="nav-logo">
-                <span class="nav-title">Stella</span>
+                <span class="nav-title">Stella Prompt Hub</span>
             </a>
             <div class="nav-menu" id="nav-menu">
-                <a href="Refer/introduction.html" class="nav-link">Home</a>
-                <a href="#" class="nav-link active">Prompts</a>
-                <a href="Refer/introduction.html#tools" class="nav-link">Tools</a>
-                <a href="Refer/introduction.html#about" class="nav-link">About</a>
-                <a href="Refer/introduction.html#support" class="nav-link">Support</a>
-                <a href="Refer/introduction.html" class="nav-link nav-cta">Back to Stella</a>
+                <a href="browse.html" class="nav-link active">Browse Prompts</a>
+                <a href="#about" class="nav-link">About</a>                        <a href="https://github.com/Hyoni1129/Stella-Prompt-Hub" class="nav-link">GitHub</a>
             </div>
             <button class="nav-toggle" id="nav-toggle">
                 <span></span>
@@ -60,8 +64,8 @@
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    <span class="title-highlight">Open Prompt</span>
-                    <span class="title-line">Collection</span>
+                    <span class="title-highlight">Stella Prompt</span>
+                    <span class="title-line">Hub</span>
                 </h1>
                 <p class="hero-subtitle">
                     Curated prompts to enhance your AI interactions and unlock creativity
@@ -167,13 +171,43 @@
         </div>
     </main>
 
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <h2>About Stella Prompt Hub</h2>
+                <div class="about-grid">
+                    <div class="about-item">
+                        <h3>📁 Simple & Static</h3>
+                        <p>No servers, no databases, no complex setup. Just drop Markdown files into the <code>prompts/</code> folder and they automatically appear on the site.</p>
+                    </div>
+                    <div class="about-item">
+                        <h3>🎨 Stella Design</h3>
+                        <p>Built with Stella's design system for consistent, professional, and accessible user experience across all devices.</p>
+                    </div>
+                    <div class="about-item">
+                        <h3>🔍 Auto-Discovery</h3>
+                        <p>JavaScript automatically discovers, parses, and categorizes your Markdown prompts without any manual configuration.</p>
+                    </div>
+                    <div class="about-item">
+                        <h3>📄 Creative Commons</h3>
+                        <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> - share, adapt, and build upon these prompts freely.</p>
+                    </div>
+                </div>
+                <div class="about-cta">
+                    <p>Want to contribute your own prompts? Check out our <a href="https://github.com/Hyoni1129/Stella-Prompt-Hub" target="_blank" rel="noopener">GitHub repository</a> to get started.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
                     <img src="Refer/Images/Stella_Text_icon.png" alt="Stella" class="footer-logo">
-                    <p>Open Prompt Collection - Curated prompts for enhanced AI interactions</p>
+                    <p>Open Prompt Hub - Curated prompts for enhanced AI interactions</p>
                 </div>
                 
                 <div class="footer-links">
@@ -204,7 +238,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Stella Open Prompt. Part of the Stella ecosystem.</p>
+                <p>&copy; 2025 Stella Prompt Hub. Part of the Stella ecosystem.</p>
                 <div class="footer-bottom-links">
                     <a href="#">Privacy Policy</a>
                     <a href="#">Terms of Service</a>
@@ -229,6 +263,6 @@
     </div>
 
     <!-- JavaScript -->
-    <script src="js/browse.js"></script>
+    <script src="src/js/browse.js"></script>
 </body>
 </html>

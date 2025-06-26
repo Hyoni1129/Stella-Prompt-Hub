@@ -1,5 +1,5 @@
 /**
- * Stella Open Prompt - Reader Page JavaScript
+ * Stella Prompt Hub - Reader Page JavaScript
  * Handles markdown parsing, TOC generation, scroll tracking, and actions
  */
 
@@ -86,8 +86,7 @@ class PromptReader {
 
     async loadPromptFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        const promptId = urlParams.get('id');
-        const category = urlParams.get('category');
+        const promptId = urlParams.get('id') || urlParams.get('prompt');
 
         if (!promptId) {
             this.showError('No prompt specified');
@@ -97,27 +96,72 @@ class PromptReader {
         this.showLoading(true);
 
         try {
-            // Load prompt metadata
-            const metadataResponse = await fetch(`/prompts/${category}/metadata.json`);
-            const metadata = await metadataResponse.json();
+            // Construct filename from prompt ID
+            const filename = promptId.endsWith('.md') ? promptId : `${promptId}.md`;
             
-            const promptMeta = metadata.prompts.find(p => p.id === promptId);
-            if (!promptMeta) {
-                throw new Error('Prompt not found');
+            // Load markdown content directly
+            const contentResponse = await fetch(`prompts/${filename}`);
+            
+            if (!contentResponse.ok) {
+                throw new Error(`Prompt not found: ${filename}`);
             }
-
-            // Load markdown content
-            const contentResponse = await fetch(`/prompts/${category}/${promptMeta.file}`);
+            
             const markdownContent = await contentResponse.text();
 
-            this.currentPrompt = { ...promptMeta, content: markdownContent };
+            // Parse basic metadata from the markdown content
+            this.currentPrompt = this.parsePromptMetadata(promptId, markdownContent);
             this.renderPrompt();
             
         } catch (error) {
             console.error('Error loading prompt:', error);
-            this.showError('Failed to load prompt');
+            this.showError('Failed to load prompt. Please check that the prompt file exists.');
         } finally {
             this.showLoading(false);
+        }
+    }
+
+    parsePromptMetadata(promptId, content) {
+        // Extract title from first # heading
+        const titleMatch = content.match(/^#\s+(.+)$/m);
+        const title = titleMatch ? titleMatch[1] : promptId.replace(/-/g, ' ');
+        
+        // Extract description from overview section
+        const overviewMatch = content.match(/## Overview\s*\n\n(.+?)(?=\n\n|\n#|$)/s);
+        const description = overviewMatch ? overviewMatch[1].trim() : '';
+        
+        // Determine category from content
+        const category = this.inferCategory(content);
+        
+        // Estimate reading time
+        const wordCount = content.split(/\s+/).length;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200));
+        
+        return {
+            id: promptId,
+            title,
+            description,
+            category,
+            readTime: `${readTime} min`,
+            content,
+            lastUpdated: new Date().toISOString().split('T')[0]
+        };
+    }
+
+    inferCategory(content) {
+        const contentLower = content.toLowerCase();
+        
+        if (contentLower.includes('writing') || contentLower.includes('story')) {
+            return 'writing';
+        } else if (contentLower.includes('code') || contentLower.includes('programming')) {
+            return 'development';
+        } else if (contentLower.includes('data') || contentLower.includes('analysis')) {
+            return 'analysis';
+        } else if (contentLower.includes('creative') || contentLower.includes('brainstorm')) {
+            return 'creative';
+        } else if (contentLower.includes('meeting') || contentLower.includes('facilitat')) {
+            return 'productivity';
+        } else {
+            return 'general';
         }
     }
 

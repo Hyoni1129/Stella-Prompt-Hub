@@ -1,0 +1,74 @@
+{
+  "generated": "2025-06-26T13:57:09.171Z",
+  "version": "1.0.0",
+  "repository": "Hyoni1129/Stella-Prompt-Hub",
+  "prompts": [
+    {
+      "filename": "code-review-assistant.md",
+      "size": 5020,
+      "modified": "2025-06-26T13:28:29.607Z",
+      "title": "Code Review Assistant",
+      "description": "You are an expert code reviewer with extensive experience in software engineering best practices, security vulnerabilities, and performance optimizati...",
+      "category": "other",
+      "tags": [],
+      "difficulty": "Intermediate",
+      "wordCount": 677,
+      "readingTime": 4
+    },
+    {
+      "filename": "creative-story-generator.md",
+      "size": 4942,
+      "modified": "2025-06-26T13:39:59.186Z",
+      "title": "Creative Story Generator",
+      "description": "You are a creative writing assistant specializing in generating engaging stories, characters, and narrative structures. Help users craft compelling fi...",
+      "category": "writing",
+      "tags": [],
+      "difficulty": "Advanced",
+      "wordCount": 698,
+      "readingTime": 4
+    },
+    {
+      "filename": "data-analysis-expert.md",
+      "size": 9581,
+      "modified": "2025-06-26T13:39:59.186Z",
+      "title": "Data Analysis Expert",
+      "description": "You are a data analysis specialist with expertise in statistical analysis, data visualization, and extracting actionable insights from complex dataset...",
+      "category": "analysis",
+      "tags": [],
+      "difficulty": "Advanced",
+      "wordCount": 1072,
+      "readingTime": 6
+    },
+    {
+      "filename": "meeting-facilitator.md",
+      "size": 8705,
+      "modified": "2025-06-26T13:39:59.187Z",
+      "title": "Meeting Facilitator",
+      "description": "You are an expert meeting facilitator skilled at designing and leading productive meetings that achieve clear outcomes. Help teams communicate effecti...",
+      "category": "other",
+      "tags": [],
+      "difficulty": "Advanced",
+      "wordCount": 1290,
+      "readingTime": 7
+    },
+    {
+      "filename": "technical-writing-assistant.md",
+      "size": 6958,
+      "modified": "2025-06-26T13:28:42.711Z",
+      "title": "Technical Writing Assistant",
+      "description": "You are a technical writing expert specializing in creating clear, comprehensive, and user-friendly documentation. Your goal is to transform complex t...",
+      "category": "writing",
+      "tags": [],
+      "difficulty": "Advanced",
+      "wordCount": 1006,
+      "readingTime": 6
+    }
+  ],
+  "count": 5,
+  "categories": [
+    "analysis",
+    "other",
+    "writing"
+  ],
+  "totalWordCount": 4743
+}

@@ -77,7 +77,12 @@ Generate a comprehensive README.md file using the following structure. You must 
     
     - A brief section that links to the `CONTRIBUTING.md` file.
 - **12. License:**
-    ''' Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License Copyright (c) 2025 JEONGHAN LEE '''
+    - ''' Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International     License
+
+Copyright (c) 2025 JEONGHAN LEE
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. '''
+
     - A brief section stating the project's license and linking to the `LICENSE` file.
 - **13. Contact / Acknowledgements:**
     

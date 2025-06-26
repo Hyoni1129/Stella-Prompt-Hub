@@ -1,0 +1,42 @@
+# Stella Prompt Hub - GitHub Pages Configuration
+
+# Include all files for GitHub Pages deployment
+include:
+  - _config.yml
+  - README.md
+  - LICENSE
+  - .nojekyll
+
+# Exclude development and build files
+exclude:
+  - node_modules/
+  - scripts/
+  - .github/
+  - package*.json
+  - .gitignore
+  - .vscode/
+  - "*.log"
+
+# GitHub Pages specific settings
+plugins:
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-relative-links
+
+# Markdown processor
+markdown: kramdown
+highlighter: rouge
+
+# Site settings for better SEO
+title: "Stella Prompt Hub"
+description: "Curated AI prompts to enhance your productivity and creativity"
+url: "https://hyoni1129.github.io"
+baseurl: "/Stella-Prompt-Hub"
+author: "JEONGHAN LEE"
+
+# Social links
+github_username: Hyoni1129
+
+# Build settings
+safe: true
+incremental: false

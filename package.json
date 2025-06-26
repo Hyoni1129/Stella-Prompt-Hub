@@ -1,0 +1,61 @@
+{
+  "name": "stella-prompt-hub",
+  "version": "1.0.0",
+  "description": "Stella Prompt Hub - A modern web interface for browsing and reading curated AI prompts with automatic GitHub integration",
+  "main": "browse.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 8000 -c-1 -o",
+    "build:prompts": "node scripts/generate-prompt-index.js",
+    "lint:css": "stylelint 'src/css/**/*.css'",
+    "lint:js": "eslint 'src/js/**/*.js'",
+    "lint:html": "html-validate '*.html'",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
+    "validate:json": "find . -name '*.json' -not -path './node_modules/*' -exec node -e \"JSON.parse(require('fs').readFileSync('{}', 'utf8'))\" \\;",
+    "test": "npm run lint && npm run validate:json",
+    "build": "npm run build:prompts",
+    "deploy": "npm run build && echo 'Ready for GitHub Pages deployment'",
+    "clean": "rm -rf node_modules package-lock.json",
+    "reinstall": "npm run clean && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyoni1129/Stella-Prompt-Hub.git"
+  },
+  "keywords": [
+    "ai",
+    "prompts", 
+    "artificial-intelligence",
+    "prompt-engineering",
+    "web-interface",
+    "stella",
+    "prompt-hub",
+    "github-pages",
+    "static-site",
+    "markdown",
+    "automation",
+    "open-source"
+  ],
+  "author": "JEONGHAN LEE",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hyoni1129/Stella-Prompt-Hub/issues"
+  },
+  "homepage": "https://github.com/Hyoni1129/Stella-Prompt-Hub#readme",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "html-validate": "^8.7.4",
+    "http-server": "^14.1.1",
+    "stylelint": "^16.1.0",
+    "stylelint-config-standard": "^36.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

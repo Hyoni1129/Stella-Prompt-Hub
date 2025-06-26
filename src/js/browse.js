@@ -1,5 +1,5 @@
-// Stella Open Prompt - Browse Page JavaScript
-// Enhanced functionality for browsing and discovering prompts
+// Stella Prompt Hub - Browse Page JavaScript
+// Automatic prompt discovery system via GitHub API
 
 class PromptBrowser {
     constructor() {
@@ -9,11 +9,21 @@ class PromptBrowser {
         this.currentView = 'grid';
         this.searchQuery = '';
         
+        // GitHub API configuration for automatic prompt discovery
+        this.githubConfig = {
+            owner: 'Hyoni1129',
+            repo: 'Stella-Prompt-Hub',
+            token: this.getGitHubToken(),
+            promptsPath: 'prompts'
+        };
+        
+        this.availablePrompts = [];
         this.init();
     }
 
     async init() {
         this.setupEventListeners();
+        await this.discoverPrompts();
         await this.loadPrompts();
         this.renderPrompts();
         this.updateCounts();
@@ -92,71 +102,246 @@ class PromptBrowser {
                 }
             }
         });
+
+        // Navigation scroll links
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('a[href="#about"]')) {
+                e.preventDefault();
+                document.getElementById('about').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+
+    /**
+     * Automatically discover all markdown files in the prompts directory via GitHub API
+     */
+    async discoverPrompts() {
+        try {
+            const { owner, repo, token, promptsPath } = this.githubConfig;
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${promptsPath}`;
+            
+            const headers = {
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'Stella-Prompt-Hub'
+            };
+            
+            // Add authorization header if token is provided
+            if (token) {
+                headers['Authorization'] = `token ${token}`;
+            }
+            
+            const response = await fetch(apiUrl, { headers });
+            
+            if (!response.ok) {
+                console.warn('GitHub API request failed, falling back to static list');
+                this.loadFallbackPrompts();
+                return;
+            }
+            
+            const files = await response.json();
+            
+            // Filter for markdown files only
+            this.availablePrompts = files
+                .filter(file => file.type === 'file' && file.name.endsWith('.md'))
+                .map(file => file.name)
+                .sort(); // Sort alphabetically
+            
+            console.log(`✅ Discovered ${this.availablePrompts.length} prompts automatically:`, this.availablePrompts);
+            
+        } catch (error) {
+            console.warn('Error discovering prompts via GitHub API:', error);
+            this.loadFallbackPrompts();
+        }
+    }
+
+    /**
+     * Enhanced fallback system with local index file support
+     */
+    async loadFallbackPrompts() {
+        try {
+            // First try to load from generated index file
+            const response = await fetch('src/data/prompt-index.json');
+            if (response.ok) {
+                const indexData = await response.json();
+                this.availablePrompts = indexData.prompts.map(p => p.filename);
+                console.log(`📋 Loaded ${this.availablePrompts.length} prompts from local index`);
+                return;
+            }
+        } catch (error) {
+            console.warn('Could not load local prompt index:', error);
+        }
+
+        // Ultimate fallback to hardcoded list
+        this.availablePrompts = [
+            'technical-writing-assistant.md',
+            'creative-story-generator.md',
+            'code-review-assistant.md',
+            'data-analysis-expert.md',
+            'meeting-facilitator.md'
+        ];
+        console.log('📋 Using hardcoded fallback prompt list');
     }
 
     async loadPrompts() {
         try {
-            // Load prompts data from JSON file
-            const response = await fetch('/prompts/prompts-data.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            this.prompts = [];
+            
+            // Load each prompt file and extract metadata from the markdown
+            for (const filename of this.availablePrompts) {
+                try {
+                    const response = await fetch(`prompts/${filename}`);
+                    if (response.ok) {
+                        const content = await response.text();
+                        const prompt = this.parseMarkdownPrompt(filename, content);
+                        this.prompts.push(prompt);
+                    }
+                } catch (error) {
+                    console.warn(`Could not load ${filename}:`, error);
+                    this.showLoadingError(filename, error);
+                }
             }
             
-            const data = await response.json();
-            this.prompts = data.allPrompts;
-            this.categories = data.categories;
-            this.stats = data.stats;
-            
             this.filteredPrompts = [...this.prompts];
+            
+            // Generate categories from loaded prompts
+            this.generateCategories();
+            
         } catch (error) {
             console.error('Error loading prompts:', error);
-            // Fallback to sample data if loading fails
-            this.loadSampleData();
+            this.loadFallbackData();
         }
     }
 
-    loadSampleData() {
-        // Fallback sample data
-        this.prompts = [
-            {
-                id: 'creative-writing-assistant',
-                title: 'Creative Writing Assistant',
-                category: 'writing',
-                description: 'A comprehensive prompt for generating creative stories with detailed character development and engaging plots.',
-                tags: ['creative', 'storytelling', 'character', 'plot'],
-                difficulty: 'Intermediate',
-                readTime: '2 min',
-                lastUpdated: '2024-01-26',
-                featured: false,
-                popularity: 85
-            },
-            {
-                id: 'code-review-expert',
-                title: 'Code Review Expert',
-                category: 'coding',
-                description: 'Professional code review assistant that provides detailed feedback on code quality, security, and best practices.',
-                tags: ['code', 'review', 'quality', 'security'],
-                difficulty: 'Advanced',
-                readTime: '1.5 min',
-                lastUpdated: '2024-01-25',
-                featured: true,
-                popularity: 92
-            },
-            {
-                id: 'data-analysis-specialist',
-                title: 'Data Analysis Specialist',
-                category: 'analysis',
-                description: 'Comprehensive data analysis assistant for exploring datasets, identifying patterns, and generating insights.',
-                tags: ['data', 'analysis', 'insights', 'patterns'],
-                difficulty: 'Intermediate',
-                readTime: '2 min',
-                lastUpdated: '2024-01-24',
-                featured: false,
-                popularity: 78
-            }
-        ];
+    parseMarkdownPrompt(filename, content) {
+        // Extract title from first # heading
+        const titleMatch = content.match(/^#\s+(.+)$/m);
+        const title = titleMatch ? titleMatch[1] : filename.replace('.md', '').replace(/-/g, ' ');
+        
+        // Extract description from overview section or first paragraph
+        const overviewMatch = content.match(/## Overview\s*\n\n(.+?)(?=\n\n|\n#|$)/s);
+        let description = overviewMatch ? overviewMatch[1].trim() : '';
+        
+        // If no overview, get first paragraph after title
+        if (!description) {
+            const firstParaMatch = content.match(/^#.+\n\n(.+?)(?=\n\n|\n#|$)/s);
+            description = firstParaMatch ? firstParaMatch[1].trim() : '';
+        }
+        
+        // Limit description length
+        if (description.length > 200) {
+            description = description.substring(0, 197) + '...';
+        }
+        
+        // Determine category from content or filename
+        const category = this.inferCategory(filename, content);
+        
+        // Generate tags from headings and content
+        const tags = this.extractTags(content);
+        
+        // Estimate reading time (average 200 words per minute)
+        const wordCount = content.split(/\s+/).length;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200));
+        
+        return {
+            id: filename.replace('.md', ''),
+            title,
+            category,
+            description,
+            tags,
+            difficulty: this.inferDifficulty(content),
+            readTime: `${readTime} min`,
+            lastUpdated: new Date().toISOString().split('T')[0], // Today's date as fallback
+            featured: false,
+            filename
+        };
+    }
 
+    inferCategory(filename, content) {
+        const contentLower = content.toLowerCase();
+        const filenameLower = filename.toLowerCase();
+        
+        if (filenameLower.includes('writing') || contentLower.includes('writing') || contentLower.includes('story')) {
+            return 'writing';
+        } else if (filenameLower.includes('code') || contentLower.includes('programming') || contentLower.includes('javascript') || contentLower.includes('python')) {
+            return 'development';
+        } else if (filenameLower.includes('data') || contentLower.includes('analysis') || contentLower.includes('statistics')) {
+            return 'analysis';
+        } else if (filenameLower.includes('creative') || contentLower.includes('brainstorm') || contentLower.includes('innovation')) {
+            return 'creative';
+        } else if (filenameLower.includes('meeting') || contentLower.includes('facilitator') || contentLower.includes('collaboration')) {
+            return 'productivity';
+        } else {
+            return 'general';
+        }
+    }
+
+    extractTags(content) {
+        const tags = new Set();
+        const contentLower = content.toLowerCase();
+        
+        // Common tag patterns
+        const tagPatterns = [
+            'writing', 'creative', 'technical', 'analysis', 'data', 'code', 'review',
+            'story', 'documentation', 'meeting', 'facilitation', 'productivity',
+            'collaboration', 'planning', 'strategy', 'communication', 'leadership'
+        ];
+        
+        tagPatterns.forEach(pattern => {
+            if (contentLower.includes(pattern)) {
+                tags.add(pattern);
+            }
+        });
+        
+        return Array.from(tags).slice(0, 5); // Limit to 5 tags
+    }
+
+    inferDifficulty(content) {
+        const wordCount = content.split(/\s+/).length;
+        const codeBlocks = (content.match(/```/g) || []).length / 2;
+        const headingCount = (content.match(/^#+\s/gm) || []).length;
+        
+        // Simple heuristic based on length and complexity
+        if (wordCount < 500 || (codeBlocks === 0 && headingCount < 5)) {
+            return 'Beginner';
+        } else if (wordCount < 1500 || codeBlocks < 3) {
+            return 'Intermediate';
+        } else {
+            return 'Advanced';
+        }
+    }
+
+    generateCategories() {
+        const categoryCount = {};
+        this.prompts.forEach(prompt => {
+            categoryCount[prompt.category] = (categoryCount[prompt.category] || 0) + 1;
+        });
+        
+        this.categories = Object.keys(categoryCount).map(name => ({
+            id: name,
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            count: categoryCount[name]
+        }));
+    }
+
+    loadFallbackData() {
+        // Minimal fallback if no prompts can be loaded
+        this.prompts = [{
+            id: 'sample-prompt',
+            title: 'Welcome to Stella Open Prompt',
+            category: 'general',
+            description: 'This is a sample prompt. Add your own Markdown files to the prompts/ directory to see them here.',
+            tags: ['sample', 'welcome'],
+            difficulty: 'Beginner',
+            readTime: '1 min',
+            lastUpdated: new Date().toISOString().split('T')[0],
+            featured: true,
+            filename: 'sample.md'
+        }];
+        
         this.filteredPrompts = [...this.prompts];
+        this.generateCategories();
     }
 
     filterPrompts() {
@@ -437,6 +622,48 @@ class PromptBrowser {
         animatedElements.forEach(el => {
             observer.observe(el);
         });
+    }
+
+    /**
+     * Show loading error to users with retry option
+     */
+    showLoadingError(filename, error) {
+        const grid = document.getElementById('prompts-grid');
+        if (!grid.querySelector('.error-notification')) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-notification';
+            errorDiv.innerHTML = `
+                <div class="error-content">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <div>
+                        <h3>Loading Error</h3>
+                        <p>Some prompts couldn't be loaded. This might be due to network issues.</p>
+                        <button class="retry-btn" onclick="location.reload()">Retry</button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(errorDiv);
+        }
+    }
+
+    /**
+     * Safely get GitHub token from environment or fallback
+     * In production, this should come from environment variables or be omitted for public repos
+     */
+    getGitHubToken() {
+        // For public repositories, GitHub API works without token (with rate limits)
+        // For private repos or higher rate limits, use environment variables
+        if (typeof process !== 'undefined' && process.env && process.env.GITHUB_TOKEN) {
+            return process.env.GITHUB_TOKEN;
+        }
+        
+        // For development/testing - remove this in production!
+        // GitHub API works without token for public repos (60 requests/hour per IP)
+        return null;
     }
 
     // Utility functions

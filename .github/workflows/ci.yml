@@ -1,0 +1,87 @@
+name: Static Site CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Validate HTML
+      run: |
+        npx html-validate *.html
+    
+    - name: Lint CSS
+      run: |
+        npx stylelint "src/css/**/*.css"
+    
+    - name: Lint JavaScript
+      run: |
+        npx eslint "src/js/**/*.js"
+    
+    - name: Validate JSON
+      run: |
+        find data -name "*.json" -exec node -e "JSON.parse(require('fs').readFileSync('{}', 'utf8'))" \;
+    
+    - name: Check for broken links
+      run: |
+        npm install -g linkinator
+        linkinator . --recurse
+
+  accessibility-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        npm install -g @axe-core/cli http-server
+    
+    - name: Start server
+      run: |
+        http-server . -p 8080 &
+        sleep 5
+    
+    - name: Run accessibility tests
+      run: |
+        axe http://localhost:8080 --exit
+
+  deploy-preview:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: '.'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+        enable-pull-request-comment: true
+        enable-commit-comment: true
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

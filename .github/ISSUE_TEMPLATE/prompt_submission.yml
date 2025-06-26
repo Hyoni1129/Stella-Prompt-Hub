@@ -1,0 +1,100 @@
+name: Prompt Submission
+description: Submit a new AI prompt to the collection
+title: "[Prompt]: "
+labels: ["prompt-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing a new prompt! Please fill out the details below.
+  
+  - type: input
+    id: prompt-title
+    attributes:
+      label: Prompt Title
+      description: A clear, descriptive title for your prompt
+      placeholder: e.g., "Creative Writing Assistant"
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category does this prompt belong to?
+      options:
+        - Coding & Development
+        - Writing & Content
+        - Analysis & Research
+        - Creative & Innovation
+        - Other (specify in description)
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty Level
+      options:
+        - Beginner
+        - Intermediate
+        - Advanced
+    validations:
+      required: true
+  
+  - type: textarea
+    id: prompt-description
+    attributes:
+      label: Prompt Description
+      description: A brief description of what this prompt does (for the card display)
+      placeholder: Brief 1-2 sentence description
+    validations:
+      required: true
+  
+  - type: textarea
+    id: prompt-content
+    attributes:
+      label: Full Prompt Content
+      description: The complete prompt in markdown format
+      placeholder: |
+        # Your Prompt Title
+        
+        ## Overview
+        Brief description...
+        
+        ## Instructions
+        Step-by-step instructions...
+    validations:
+      required: true
+  
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Comma-separated tags for this prompt
+      placeholder: e.g., creative, storytelling, character, plot
+    validations:
+      required: true
+  
+  - type: textarea
+    id: examples
+    attributes:
+      label: Usage Examples
+      description: Provide examples of how to use this prompt effectively
+  
+  - type: checkboxes
+    id: quality-checklist
+    attributes:
+      label: Quality Checklist
+      description: Please confirm your prompt meets our quality standards
+      options:
+        - label: The prompt is clear and unambiguous
+          required: true
+        - label: The prompt includes specific instructions
+          required: true
+        - label: The prompt has been tested and works effectively
+          required: true
+        - label: The prompt is original content
+          required: true
+        - label: The prompt follows our formatting guidelines
+          required: true
