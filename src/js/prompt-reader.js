@@ -206,29 +206,23 @@ class PromptReader {
     }
 
     parseMarkdown(markdown) {
-        // Configure marked for our needs
-        marked.setOptions({
-            breaks: true,
-            gfm: true,
-            headerIds: true,
-            headerPrefix: '',
-            highlight: function(code, lang) {
-                if (lang && Prism.languages[lang]) {
-                    return Prism.highlight(code, Prism.languages[lang], lang);
-                } else {
-                    return code;
-                }
-            }
-        });
-
         // Custom renderer for code blocks with copy buttons
         const renderer = new marked.Renderer();
 
         renderer.code = function(code, lang) {
             const language = lang || 'text';
-            const escapedCode = this.options.highlight ?
-                this.options.highlight(code, language) :
-                this.escapeHtml(code);
+
+            // Use Prism for syntax highlighting if available
+            let highlightedCode;
+            if (lang && Prism.languages[lang]) {
+                try {
+                    highlightedCode = Prism.highlight(code, Prism.languages[lang], lang);
+                } catch (e) {
+                    highlightedCode = this.escapeHtml(code);
+                }
+            } else {
+                highlightedCode = this.escapeHtml(code);
+            }
 
             return `<div class="code-block">
                 <div class="code-header">
@@ -238,7 +232,7 @@ class PromptReader {
                         Copy
                     </button>
                 </div>
-                <pre><code class="language-${language}">${escapedCode}</code></pre>
+                <pre><code class="language-${language}">${highlightedCode}</code></pre>
             </div>`;
         }.bind(this);
 
@@ -248,8 +242,17 @@ class PromptReader {
             return `<h${level} id="${id}">${text}</h${level}>`;
         }.bind(this);
 
-        // Parse markdown with custom renderer
-        const html = marked.parse(markdown, { renderer });
+        // Configure marked options (new API)
+        const options = {
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            headerPrefix: '',
+            renderer: renderer
+        };
+
+        // Parse markdown with options
+        const html = marked.parse(markdown, options);
 
         return html;
     }

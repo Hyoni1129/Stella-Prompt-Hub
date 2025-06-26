@@ -12,6 +12,28 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
 
 # Logs
 logs
@@ -27,7 +49,9 @@ ehthumbs.db
 Thumbs.db
 
 # IDE files
-.vscode/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
 .idea/
 *.swp
 *.swo
@@ -36,6 +60,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+tmp/
+temp/
 
 # Build outputs
 dist/
@@ -50,12 +76,10 @@ build/
 
 # Cache
 .cache/
+.parcel-cache/
 
-# Backup files
-*.bak
-*.backup
-*~
+# Local development
+.local/
 
-# System files
-Thumbs.db
-Desktop.ini
+# Generated files
+src/data/prompt-index.json
