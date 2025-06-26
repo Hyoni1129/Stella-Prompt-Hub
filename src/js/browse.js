@@ -387,7 +387,17 @@ class PromptBrowser {
     }
 
     createPromptCard(prompt) {
-        const truncatedContent = prompt.content.substring(0, 150) + '...';
+        // Validate and provide fallbacks for all fields
+        const id = prompt.id || prompt.filename || 'unknown';
+        const title = prompt.title || 'Untitled Prompt';
+        const description = prompt.description || 'No description available';
+        const category = prompt.category || 'other';
+        const content = prompt.content || description;
+        const truncatedContent = content.length > 150 ? content.substring(0, 150) + '...' : content;
+        const readingTime = prompt.readingTime || '5 min read';
+        const wordCount = prompt.wordCount || 0;
+        const difficulty = prompt.difficulty || 'intermediate';
+
         const difficultyColor = {
             'beginner': 'var(--success)',
             'intermediate': 'var(--warning)',
@@ -395,14 +405,14 @@ class PromptBrowser {
         };
 
         return `
-            <div class="prompt-card ${prompt.featured ? 'featured' : ''}" data-id="${this.escapeHtml(prompt.id)}">
+            <div class="prompt-card ${prompt.featured ? 'featured' : ''}" data-id="${this.escapeHtml(id)}">
                 <div class="prompt-category">
-                    <span class="badge badge-${this.escapeHtml(prompt.category)}">${this.escapeHtml(prompt.category)}</span>
+                    <span class="badge badge-${this.escapeHtml(category)}">${this.escapeHtml(category)}</span>
                 </div>
                 
                 <div class="prompt-content">
-                    <h3 class="prompt-title">${this.escapeHtml(prompt.title)}</h3>
-                    <p class="prompt-description">${this.escapeHtml(prompt.description)}</p>
+                    <h3 class="prompt-title">${this.escapeHtml(title)}</h3>
+                    <p class="prompt-description">${this.escapeHtml(description)}</p>
                     
                     <div class="prompt-preview">
                         ${this.escapeHtml(truncatedContent)}
@@ -414,7 +424,7 @@ class PromptBrowser {
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12,6 12,12 16,14"/>
                             </svg>
-                            <span>${this.escapeHtml(prompt.readingTime)}</span>
+                            <span>${this.escapeHtml(readingTime)}</span>
                         </div>
                         <div class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -424,18 +434,18 @@ class PromptBrowser {
                                 <line x1="16" y1="17" x2="8" y2="17"/>
                                 <polyline points="10,9 9,9 8,9"/>
                             </svg>
-                            <span>${this.escapeHtml(prompt.wordCount)} words</span>
+                            <span>${this.escapeHtml(wordCount)} words</span>
                         </div>
                         <div class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
-                            <span style="color: ${difficultyColor[prompt.difficulty] || 'var(--gray-500)'}">${prompt.difficulty}</span>
+                            <span style="color: ${difficultyColor[difficulty] || 'var(--gray-500)'}">${this.escapeHtml(difficulty)}</span>
                         </div>
                     </div>
                     
                     <div class="prompt-actions">
-                        <button class="action-btn action-btn-primary" onclick="promptBrowser.openPrompt('${prompt.id}')">
+                        <button class="action-btn action-btn-primary" onclick="promptBrowser.openPrompt('${this.escapeHtml(id)}')">>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                 <circle cx="12" cy="12" r="3"/>

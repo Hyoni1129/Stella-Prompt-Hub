@@ -1,12 +1,12 @@
 <div align="center">
 
-![Stella Icon](Refer/Images/Stella_Icon.png)
+<img src="Refer/Images/Stella_Icon.png" alt="Stella Icon" width="120" height="120">
 
 # 🌟 Stella Prompt Hub
 
 **A Modern Web Interface for Curated AI Prompts**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![GitHub Pages](https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-blue.svg)](https://hyoni1129.github.io/Stella-Prompt-Hub/)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
@@ -236,7 +236,9 @@ We welcome contributions! Here's how you can help:
 
 ## 📜 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License**.
+
+**Stella Prompt Hub © 2025 by JeongHan Lee** is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ---
 
@@ -247,7 +249,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **JeongHan Lee**
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Hyoni1129)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/jeonghan-lee)
 
 *Passionate about AI, web development, and open source projects*
 
@@ -280,6 +281,6 @@ If this project helped you, please consider:
 
 *Stella Prompt Hub - Making AI prompts accessible to everyone*
 
-![Stella Text Icon](Refer/Images/Stella_Text_icon.png)
+<img src="Refer/Images/Stella_Text_icon.png" alt="Stella Text Icon" width="200">
 
 </div>
