@@ -1,0 +1,40 @@
+/* Icon utilities using unicode symbols for now */
+.icon-search::before { content: "🔍"; }
+.icon-copy::before { content: "📋"; }
+.icon-download::before { content: "⬇️"; }
+.icon-share::before { content: "🔗"; }
+.icon-print::before { content: "🖨️"; }
+.icon-menu::before { content: "☰"; }
+.icon-close::before { content: "✕"; }
+.icon-arrow-left::before { content: "←"; }
+.icon-arrow-right::before { content: "→"; }
+.icon-chevron-down::before { content: "⌄"; }
+.icon-chevron-up::before { content: "⌃"; }
+.icon-heart::before { content: "♡"; }
+.icon-heart-filled::before { content: "♥"; }
+.icon-star::before { content: "☆"; }
+.icon-star-filled::before { content: "★"; }
+.icon-lightbulb::before { content: "💡"; }
+.icon-code::before { content: "💻"; }
+.icon-edit::before { content: "✏️"; }
+.icon-chart::before { content: "📊"; }
+.icon-alert::before { content: "⚠️"; }
+.icon-check::before { content: "✓"; }
+.icon-filter::before { content: "🔽"; }
+.icon-grid::before { content: "⊞"; }
+.icon-list::before { content: "☰"; }
+.icon-external::before { content: "↗"; }
+
+/* Icon base styles */
+[class*="icon-"] {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+[class*="icon-"]::before {
+    font-size: inherit;
+    opacity: 0.8;
+}
