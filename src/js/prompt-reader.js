@@ -10,6 +10,11 @@ class PromptReader {
         this.isLoading = false;
         this.observer = null;
 
+        // Bind throttled function
+        this.throttledUpdateActiveSection = this.throttle(() => {
+            this.updateActiveSectionOnScroll();
+        }, 100);
+
         this.init();
     }
 
@@ -76,23 +81,34 @@ class PromptReader {
         // Show/hide back to top button on scroll
         window.addEventListener('scroll', () => {
             this.toggleBackToTopButton();
+            this.throttledUpdateActiveSection();
+            this.updateReadingProgress();
         });
     }
 
     setupIntersectionObserver() {
         const options = {
             root: null,
-            rootMargin: '-100px 0px -50% 0px',
-            threshold: 0
+            rootMargin: '-20% 0px -70% 0px', // More sensitive detection
+            threshold: [0, 0.1, 0.3, 0.5]
         };
 
         this.observer = new IntersectionObserver((entries) => {
+            // Find the entry with the highest intersection ratio
+            let mostVisible = null;
+            let highestRatio = 0;
+
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.updateActiveSection(entry.target.id);
-                    this.updateReadingProgress(entry.target);
+                if (entry.isIntersecting && entry.intersectionRatio > highestRatio) {
+                    highestRatio = entry.intersectionRatio;
+                    mostVisible = entry;
                 }
             });
+
+            if (mostVisible) {
+                this.updateActiveSection(mostVisible.target.id);
+                this.updateReadingProgress(mostVisible.target);
+            }
         }, options);
     }
 
@@ -278,11 +294,13 @@ class PromptReader {
         const tocContainer = document.getElementById('toc-nav');
 
         this.tocItems = [];
-        if (!tocContainer) return;
+        if (!tocContainer) {
+            return;
+        }
 
         // Clear existing TOC and create a clean structure
         tocContainer.innerHTML = '';
-        
+
         if (headers.length === 0) {
             // Show empty state message
             const emptyMessage = document.createElement('div');
@@ -294,7 +312,7 @@ class PromptReader {
             tocContainer.appendChild(emptyMessage);
             return;
         }
-        
+
         const tocList = document.createElement('ul');
         tocContainer.appendChild(tocList);
 
@@ -369,7 +387,7 @@ class PromptReader {
         const activeLink = document.querySelector(`[data-section="${sectionId}"]`);
         if (activeLink) {
             activeLink.classList.add('active');
-            
+
             // Scroll the active TOC item into view if it's outside the visible area
             this.scrollTOCToActiveItem(activeLink);
         }
@@ -378,41 +396,69 @@ class PromptReader {
     scrollTOCToActiveItem(activeLink) {
         const tocContainer = document.getElementById('toc-nav');
         const sidebarContent = document.querySelector('.sidebar-content');
-        
-        if (!tocContainer || !sidebarContent || !activeLink) return;
 
-        const containerRect = sidebarContent.getBoundingClientRect();
-        const linkRect = activeLink.getBoundingClientRect();
-        
-        // Check if the active link is outside the visible area
-        if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
-            const scrollTop = sidebarContent.scrollTop;
-            const linkOffsetTop = activeLink.offsetTop;
-            const containerHeight = sidebarContent.clientHeight;
-            const linkHeight = activeLink.offsetHeight;
-            
-            // Calculate the new scroll position to center the active item
-            const newScrollTop = linkOffsetTop - (containerHeight / 2) + (linkHeight / 2);
-            
-            sidebarContent.scrollTo({
-                top: Math.max(0, newScrollTop),
-                behavior: 'smooth'
-            });
+        if (!tocContainer || !sidebarContent || !activeLink) {
+            return;
         }
+
+        // Use requestAnimationFrame for smooth performance
+        requestAnimationFrame(() => {
+            const containerRect = sidebarContent.getBoundingClientRect();
+            const linkRect = activeLink.getBoundingClientRect();
+
+            // Get relative positions within the sidebar
+            const sidebarTop = containerRect.top;
+            const sidebarBottom = containerRect.bottom;
+            const linkTop = linkRect.top;
+            const linkBottom = linkRect.bottom;
+
+            // Check if the active link is outside the visible area with some padding
+            const padding = 50;
+            const needsScroll = linkTop < (sidebarTop + padding) ||
+                               linkBottom > (sidebarBottom - padding);
+
+            if (needsScroll) {
+                // Calculate optimal scroll position
+                const currentScrollTop = sidebarContent.scrollTop;
+                const linkOffsetTop = activeLink.offsetTop;
+                const containerHeight = sidebarContent.clientHeight;
+                const linkHeight = activeLink.offsetHeight;
+
+                // Try to center the active item, but ensure it's fully visible
+                let targetScrollTop = linkOffsetTop - (containerHeight / 3) + (linkHeight / 2);
+
+                // Ensure we don't scroll past the bounds
+                const maxScrollTop = sidebarContent.scrollHeight - containerHeight;
+                targetScrollTop = Math.max(0, Math.min(targetScrollTop, maxScrollTop));
+
+                // Only scroll if the difference is significant (avoid micro-scrolling)
+                if (Math.abs(currentScrollTop - targetScrollTop) > 10) {
+                    sidebarContent.scrollTo({
+                        top: targetScrollTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
     }
 
-    updateReadingProgress(element) {
-        const contentContainer = document.getElementById('prompt-content');
-        const contentHeight = contentContainer.scrollHeight;
-        const elementTop = element.offsetTop;
+    updateReadingProgress() {
+        const progressBar = document.getElementById('reading-progress');
+        if (!progressBar) {
+            return;
+        }
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = document.documentElement.scrollHeight;
         const windowHeight = window.innerHeight;
 
-        const progress = Math.min(100, (elementTop / (contentHeight - windowHeight)) * 100);
+        // Calculate progress based on scroll position
+        const scrollProgress = Math.min(100, Math.max(0,
+            (scrollTop / (documentHeight - windowHeight)) * 100
+        ));
 
-        const progressBar = document.querySelector('.reading-progress');
-        if (progressBar) {
-            progressBar.style.width = `${Math.max(0, progress)}%`;
-        }
+        progressBar.value = scrollProgress;
+        progressBar.setAttribute('aria-valuenow', Math.round(scrollProgress));
     }
 
     scrollToSection(href) {
@@ -567,7 +613,7 @@ class PromptReader {
                 this.closeSidebar();
                 return;
             }
-            
+
             const searchInput = document.getElementById('content-search');
             if (searchInput && searchInput.value) {
                 searchInput.value = '';
@@ -597,14 +643,14 @@ class PromptReader {
             if (activeLink) {
                 const allLinks = Array.from(document.querySelectorAll('.toc-link'));
                 const currentIndex = allLinks.indexOf(activeLink);
-                
+
                 let nextIndex;
                 if (e.key === 'ArrowUp') {
                     nextIndex = currentIndex > 0 ? currentIndex - 1 : allLinks.length - 1;
                 } else {
                     nextIndex = currentIndex < allLinks.length - 1 ? currentIndex + 1 : 0;
                 }
-                
+
                 if (allLinks[nextIndex]) {
                     e.preventDefault();
                     const targetId = allLinks[nextIndex].getAttribute('data-section');
@@ -612,21 +658,21 @@ class PromptReader {
                 }
             }
         }
-        
+
         // Arrow keys for TOC navigation
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             const activeLink = document.querySelector('.toc-link.active');
             if (activeLink) {
                 const allLinks = Array.from(document.querySelectorAll('.toc-link'));
                 const currentIndex = allLinks.indexOf(activeLink);
-                
+
                 let nextIndex;
                 if (e.key === 'ArrowUp') {
                     nextIndex = currentIndex > 0 ? currentIndex - 1 : allLinks.length - 1;
                 } else {
                     nextIndex = currentIndex < allLinks.length - 1 ? currentIndex + 1 : 0;
                 }
-                
+
                 if (allLinks[nextIndex]) {
                     e.preventDefault();
                     const targetId = allLinks[nextIndex].getAttribute('data-section');
@@ -638,11 +684,10 @@ class PromptReader {
 
     toggleSidebar() {
         const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        
+
         if (sidebar) {
             const isOpen = sidebar.classList.contains('active');
-            
+
             if (isOpen) {
                 this.closeSidebar();
             } else {
@@ -655,16 +700,18 @@ class PromptReader {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         const toggleBtn = document.getElementById('sidebar-toggle');
-        
+
         if (sidebar) {
             sidebar.classList.add('active');
-            if (overlay) overlay.classList.add('active');
-            
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+
             // Update accessibility attributes
             if (toggleBtn) {
                 toggleBtn.setAttribute('aria-expanded', 'true');
             }
-            
+
             // Prevent body scroll on mobile when sidebar is open
             if (window.innerWidth <= 768) {
                 document.body.style.overflow = 'hidden';
@@ -676,16 +723,18 @@ class PromptReader {
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         const toggleBtn = document.getElementById('sidebar-toggle');
-        
+
         if (sidebar) {
             sidebar.classList.remove('active');
-            if (overlay) overlay.classList.remove('active');
-            
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+
             // Update accessibility attributes
             if (toggleBtn) {
                 toggleBtn.setAttribute('aria-expanded', 'false');
             }
-            
+
             // Restore body scroll
             document.body.style.overflow = '';
         }
@@ -767,7 +816,7 @@ class PromptReader {
         // Handle responsive layout updates
         const windowWidth = window.innerWidth;
         const sidebar = document.querySelector('.sidebar');
-        
+
         if (windowWidth > 768 && sidebar) {
             // Reset mobile-specific classes on larger screens
             this.closeSidebar();
@@ -857,6 +906,75 @@ class PromptReader {
             }, 3000);
         }
     }
+
+    throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
+
+    updateActiveSectionOnScroll() {
+        if (this.tocItems.length === 0) {
+            return;
+        }
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+
+        // If we're near the bottom of the page, activate the last section
+        if (scrollTop + windowHeight >= documentHeight - 50) {
+            const lastItem = this.tocItems[this.tocItems.length - 1];
+            if (lastItem) {
+                this.updateActiveSection(lastItem.id);
+            }
+            return;
+        }
+
+        // Find the section that's currently most visible in the viewport
+        let activeSection = null;
+        let bestMatch = -1;
+
+        this.tocItems.forEach(item => {
+            const element = item.element;
+            if (!element) {
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const elementTop = rect.top;
+            const elementBottom = rect.bottom;
+
+            // Check if element is in viewport
+            if (elementTop <= windowHeight && elementBottom >= 0) {
+                // Calculate how much of the element is visible
+                const visibleTop = Math.max(0, elementTop);
+                const visibleBottom = Math.min(windowHeight, elementBottom);
+                const visibleHeight = visibleBottom - visibleTop;
+
+                // Prefer sections that are closer to the top of the viewport
+                const score = visibleHeight - Math.abs(elementTop);
+
+                if (score > bestMatch) {
+                    bestMatch = score;
+                    activeSection = item.id;
+                }
+            }
+        });
+
+        if (activeSection) {
+            this.updateActiveSection(activeSection);
+        }
+    }
+
+    // ...existing code...
 
     createSlug(text) {
         return text

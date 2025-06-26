@@ -62,6 +62,7 @@
     padding: 2rem;
     overflow-y: auto;
     flex: 1;
+
     /* Custom scrollbar for better UX */
     scrollbar-width: thin;
     scrollbar-color: var(--gray-300) transparent;
@@ -148,6 +149,7 @@
 
 .toc-nav {
     position: relative;
+    scroll-behavior: smooth;
 }
 
 .toc-nav ul {
@@ -291,11 +293,6 @@
     margin: 0;
     font-size: 0.875rem;
     font-style: italic;
-}
-
-/* Smooth scrolling for TOC container */
-.toc-nav {
-    scroll-behavior: smooth;
 }
 
 /* Action Panel */
