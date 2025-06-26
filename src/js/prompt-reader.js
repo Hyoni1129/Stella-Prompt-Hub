@@ -20,9 +20,9 @@ class PromptReader {
     }
 
     bindEvents() {
-        // Copy actions
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => this.handleCopyAction(e));
+        // Copy actions - updated to match HTML structure
+        document.getElementById('copy-full-btn')?.addEventListener('click', () => {
+            this.copyFullPrompt();
         });
 
         // Download action
@@ -58,13 +58,10 @@ class PromptReader {
             this.updateLayout();
         });
 
-        // Search within content
-        const searchInput = document.getElementById('content-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.searchContent(e.target.value);
-            });
-        }
+        // Sidebar toggle for mobile
+        document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+            this.toggleSidebar();
+        });
     }
 
     setupIntersectionObserver() {
@@ -165,6 +162,21 @@ class PromptReader {
         }
     }
 
+    inferDifficulty(content) {
+        const wordCount = content.split(/\s+/).length;
+        const codeBlocks = (content.match(/```/g) || []).length / 2;
+        const headingCount = (content.match(/^#+\s/gm) || []).length;
+
+        // Simple heuristic based on length and complexity
+        if (wordCount < 500 || (codeBlocks === 0 && headingCount < 5)) {
+            return 'Beginner';
+        } else if (wordCount < 1500 || codeBlocks < 3) {
+            return 'Intermediate';
+        } else {
+            return 'Advanced';
+        }
+    }
+
     renderPrompt() {
         if (!this.currentPrompt) {
             return;
@@ -189,8 +201,8 @@ class PromptReader {
         // Setup section observers
         this.observeSections();
 
-        // Update sidebar metadata
-        this.updateSidebarMetadata();
+        // Update metadata
+        this.updateMetadata();
     }
 
     parseMarkdown(markdown) {
@@ -245,10 +257,12 @@ class PromptReader {
     generateTOC() {
         const contentContainer = document.getElementById('prompt-content');
         const headers = contentContainer.querySelectorAll('h1, h2, h3');
-        const tocContainer = document.getElementById('toc-list');
+        const tocContainer = document.getElementById('toc-nav'); // Changed from 'toc-list' to 'toc-nav'
 
         this.tocItems = [];
-        tocContainer.innerHTML = '';
+        if (tocContainer) {
+            tocContainer.innerHTML = '';
+        }
 
         headers.forEach((header) => {
             const id = this.createSlug(header.textContent);
@@ -264,16 +278,18 @@ class PromptReader {
 
             this.tocItems.push(tocItem);
 
-            // Create TOC link
-            const tocLink = document.createElement('a');
-            tocLink.href = `#${id}`;
-            tocLink.className = `toc-link toc-level-${level}`;
-            tocLink.textContent = header.textContent;
-            tocLink.setAttribute('data-section', id);
+            // Create TOC link only if container exists
+            if (tocContainer) {
+                const tocLink = document.createElement('a');
+                tocLink.href = `#${id}`;
+                tocLink.className = `toc-link toc-level-${level}`;
+                tocLink.textContent = header.textContent;
+                tocLink.setAttribute('data-section', id);
 
-            const tocListItem = document.createElement('li');
-            tocListItem.appendChild(tocLink);
-            tocContainer.appendChild(tocListItem);
+                const tocListItem = document.createElement('li');
+                tocListItem.appendChild(tocLink);
+                tocContainer.appendChild(tocListItem);
+            }
         });
     }
 
@@ -403,6 +419,20 @@ class PromptReader {
         }, 2000);
     }
 
+    async copyFullPrompt() {
+        if (!this.currentPrompt) {
+            return;
+        }
+
+        try {
+            await this.copyToClipboard(this.currentPrompt.content);
+            this.showToast('Full prompt copied to clipboard!');
+        } catch (error) {
+            console.error('Failed to copy:', error);
+            this.showErrorToast('Failed to copy prompt');
+        }
+    }
+
     downloadPrompt() {
         if (!this.currentPrompt) {
             return;
@@ -508,70 +538,58 @@ class PromptReader {
             return;
         }
 
-        // Update header metadata
-        const titleElement = document.querySelector('.prompt-title');
-        const categoryElement = document.querySelector('.prompt-category');
-        const descriptionElement = document.querySelector('.prompt-description');
+        // Update document title and metadata based on HTML structure
+        const docTitle = document.getElementById('doc-title');
+        const docCategory = document.getElementById('doc-category');
+        const docReadingTime = document.getElementById('doc-reading-time');
+        const docWordCount = document.getElementById('doc-word-count');
+        const docDifficulty = document.getElementById('doc-difficulty');
+        const docLastUpdated = document.getElementById('doc-last-updated');
 
-        if (titleElement) {
-            titleElement.textContent = this.currentPrompt.title;
+        if (docTitle) {
+            docTitle.textContent = this.currentPrompt.title;
         }
-        if (categoryElement) {
-            categoryElement.textContent = this.currentPrompt.category;
-            categoryElement.className = `prompt-category category-${this.currentPrompt.category.toLowerCase()}`;
+        if (docCategory) {
+            docCategory.textContent = this.currentPrompt.category;
+            docCategory.className = `doc-category badge badge-${this.currentPrompt.category.toLowerCase()}`;
         }
-        if (descriptionElement) {
-            descriptionElement.textContent = this.currentPrompt.description;
+        if (docReadingTime) {
+            docReadingTime.textContent = this.currentPrompt.readTime;
         }
-    }
-
-    updateSidebarMetadata() {
-        if (!this.currentPrompt) {
-            return;
+        if (docWordCount) {
+            const wordCount = this.currentPrompt.content.split(/\s+/).length;
+            docWordCount.textContent = `${wordCount} words`;
         }
-
-        const sidebar = document.querySelector('.sidebar');
-        const metadataSection = sidebar.querySelector('.prompt-metadata');
-
-        if (metadataSection) {
-            metadataSection.innerHTML = `
-                <div class="metadata-item">
-                    <span class="metadata-label">Category:</span>
-                    <span class="metadata-value">${this.currentPrompt.category}</span>
-                </div>
-                <div class="metadata-item">
-                    <span class="metadata-label">Difficulty:</span>
-                    <span class="metadata-value">${this.currentPrompt.difficulty || 'Intermediate'}</span>
-                </div>
-                <div class="metadata-item">
-                    <span class="metadata-label">Tags:</span>
-                    <span class="metadata-value">${(this.currentPrompt.tags || []).join(', ')}</span>
-                </div>
-                <div class="metadata-item">
-                    <span class="metadata-label">Updated:</span>
-                    <span class="metadata-value">${this.formatDate(this.currentPrompt.lastUpdated)}</span>
-                </div>
-            `;
+        if (docDifficulty) {
+            const difficulty = this.inferDifficulty(this.currentPrompt.content);
+            docDifficulty.textContent = difficulty;
+        }
+        if (docLastUpdated) {
+            docLastUpdated.textContent = this.formatDate(this.currentPrompt.lastUpdated);
         }
     }
 
     updateLayout() {
         // Handle responsive layout changes
         const sidebar = document.querySelector('.sidebar');
-        const content = document.querySelector('.content');
+        const content = document.querySelector('.content-area'); // Changed from '.content' to '.content-area'
 
-        if (window.innerWidth <= 768) {
+        if (sidebar && window.innerWidth <= 768) {
             sidebar.classList.add('mobile');
-            content.classList.add('mobile');
-        } else {
+        } else if (sidebar) {
             sidebar.classList.remove('mobile');
+        }
+
+        if (content && window.innerWidth <= 768) {
+            content.classList.add('mobile');
+        } else if (content) {
             content.classList.remove('mobile');
         }
     }
 
     showLoading(show) {
-        const loadingElement = document.querySelector('.loading-indicator');
-        const contentElement = document.querySelector('.main-content');
+        const loadingElement = document.querySelector('.loading-container');
+        const contentElement = document.getElementById('prompt-content');
 
         if (loadingElement) {
             loadingElement.style.display = show ? 'block' : 'none';
@@ -584,17 +602,22 @@ class PromptReader {
     }
 
     showError(message) {
-        const errorContainer = document.querySelector('.error-container');
-        if (errorContainer) {
-            errorContainer.innerHTML = `
-                <div class="error-message">
-                    <i class="icon-alert"></i>
-                    <h3>Error</h3>
-                    <p>${message}</p>
-                    <button class="btn btn-primary" onclick="window.history.back()">Go Back</button>
+        const contentContainer = document.getElementById('prompt-content');
+        if (contentContainer) {
+            contentContainer.innerHTML = `
+                <div class="error-container">
+                    <div class="error-message">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        <h3>Error Loading Prompt</h3>
+                        <p>${message}</p>
+                        <button class="action-btn action-btn-primary" onclick="window.history.back()">Go Back</button>
+                    </div>
                 </div>
             `;
-            errorContainer.style.display = 'block';
         }
     }
 
@@ -615,6 +638,36 @@ class PromptReader {
                 document.body.removeChild(notification);
             }, 300);
         }, 3000);
+    }
+
+    showToast(message) {
+        const toast = document.getElementById('copy-toast');
+        if (toast) {
+            const span = toast.querySelector('span');
+            if (span) {
+                span.textContent = message;
+            }
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    }
+
+    showErrorToast(message) {
+        const toast = document.getElementById('error-toast');
+        if (toast) {
+            const span = toast.querySelector('span');
+            if (span) {
+                span.textContent = message;
+            }
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
     }
 
     createSlug(text) {
