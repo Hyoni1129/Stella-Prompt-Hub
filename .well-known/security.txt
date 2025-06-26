@@ -1,0 +1,8 @@
+# Security.txt
+# https://securitytxt.org/
+
+Contact: mailto:security@stellaprompt.hub
+Expires: 2026-06-26T23:59:59.000Z
+Preferred-Languages: en, ko
+Canonical: https://stellaprompthub.github.io/.well-known/security.txt
+Policy: https://stellaprompthub.github.io/SECURITY.md

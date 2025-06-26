@@ -8,7 +8,7 @@ class PromptBrowser {
         this.currentCategory = 'all';
         this.currentView = 'grid';
         this.searchQuery = '';
-        
+
         // GitHub API configuration for automatic prompt discovery
         this.githubConfig = {
             owner: 'Hyoni1129',
@@ -16,7 +16,7 @@ class PromptBrowser {
             token: this.getGitHubToken(),
             promptsPath: 'prompts'
         };
-        
+
         this.availablePrompts = [];
         this.init();
     }
@@ -34,7 +34,7 @@ class PromptBrowser {
         // Search functionality
         const searchInput = document.getElementById('search-input');
         const searchClear = document.getElementById('search-clear');
-        
+
         searchInput.addEventListener('input', this.debounce((e) => {
             this.searchQuery = e.target.value.toLowerCase();
             this.filterPrompts();
@@ -91,14 +91,14 @@ class PromptBrowser {
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 switch(e.key) {
-                    case 'k':
-                        e.preventDefault();
-                        searchInput.focus();
-                        break;
-                    case '/':
-                        e.preventDefault();
-                        searchInput.focus();
-                        break;
+                case 'k':
+                    e.preventDefault();
+                    searchInput.focus();
+                    break;
+                case '/':
+                    e.preventDefault();
+                    searchInput.focus();
+                    break;
                 }
             }
         });
@@ -121,35 +121,35 @@ class PromptBrowser {
         try {
             const { owner, repo, token, promptsPath } = this.githubConfig;
             const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${promptsPath}`;
-            
+
             const headers = {
                 'Accept': 'application/vnd.github.v3+json',
                 'User-Agent': 'Stella-Prompt-Hub'
             };
-            
+
             // Add authorization header if token is provided
             if (token) {
                 headers['Authorization'] = `token ${token}`;
             }
-            
+
             const response = await fetch(apiUrl, { headers });
-            
+
             if (!response.ok) {
                 console.warn('GitHub API request failed, falling back to static list');
                 this.loadFallbackPrompts();
                 return;
             }
-            
+
             const files = await response.json();
-            
+
             // Filter for markdown files only
             this.availablePrompts = files
                 .filter(file => file.type === 'file' && file.name.endsWith('.md'))
                 .map(file => file.name)
                 .sort(); // Sort alphabetically
-            
+
             console.log(`✅ Discovered ${this.availablePrompts.length} prompts automatically:`, this.availablePrompts);
-            
+
         } catch (error) {
             console.warn('Error discovering prompts via GitHub API:', error);
             this.loadFallbackPrompts();
@@ -187,7 +187,7 @@ class PromptBrowser {
     async loadPrompts() {
         try {
             this.prompts = [];
-            
+
             // Load each prompt file and extract metadata from the markdown
             for (const filename of this.availablePrompts) {
                 try {
@@ -199,15 +199,15 @@ class PromptBrowser {
                     }
                 } catch (error) {
                     console.warn(`Could not load ${filename}:`, error);
-                    this.showLoadingError(filename, error);
+                    this.showLoadingError();
                 }
             }
-            
+
             this.filteredPrompts = [...this.prompts];
-            
+
             // Generate categories from loaded prompts
             this.generateCategories();
-            
+
         } catch (error) {
             console.error('Error loading prompts:', error);
             this.loadFallbackData();
@@ -218,32 +218,32 @@ class PromptBrowser {
         // Extract title from first # heading
         const titleMatch = content.match(/^#\s+(.+)$/m);
         const title = titleMatch ? titleMatch[1] : filename.replace('.md', '').replace(/-/g, ' ');
-        
+
         // Extract description from overview section or first paragraph
         const overviewMatch = content.match(/## Overview\s*\n\n(.+?)(?=\n\n|\n#|$)/s);
         let description = overviewMatch ? overviewMatch[1].trim() : '';
-        
+
         // If no overview, get first paragraph after title
         if (!description) {
             const firstParaMatch = content.match(/^#.+\n\n(.+?)(?=\n\n|\n#|$)/s);
             description = firstParaMatch ? firstParaMatch[1].trim() : '';
         }
-        
+
         // Limit description length
         if (description.length > 200) {
             description = description.substring(0, 197) + '...';
         }
-        
+
         // Determine category from content or filename
         const category = this.inferCategory(filename, content);
-        
+
         // Generate tags from headings and content
         const tags = this.extractTags(content);
-        
+
         // Estimate reading time (average 200 words per minute)
         const wordCount = content.split(/\s+/).length;
         const readTime = Math.max(1, Math.ceil(wordCount / 200));
-        
+
         return {
             id: filename.replace('.md', ''),
             title,
@@ -261,7 +261,7 @@ class PromptBrowser {
     inferCategory(filename, content) {
         const contentLower = content.toLowerCase();
         const filenameLower = filename.toLowerCase();
-        
+
         if (filenameLower.includes('writing') || contentLower.includes('writing') || contentLower.includes('story')) {
             return 'writing';
         } else if (filenameLower.includes('code') || contentLower.includes('programming') || contentLower.includes('javascript') || contentLower.includes('python')) {
@@ -280,20 +280,20 @@ class PromptBrowser {
     extractTags(content) {
         const tags = new Set();
         const contentLower = content.toLowerCase();
-        
+
         // Common tag patterns
         const tagPatterns = [
             'writing', 'creative', 'technical', 'analysis', 'data', 'code', 'review',
             'story', 'documentation', 'meeting', 'facilitation', 'productivity',
             'collaboration', 'planning', 'strategy', 'communication', 'leadership'
         ];
-        
+
         tagPatterns.forEach(pattern => {
             if (contentLower.includes(pattern)) {
                 tags.add(pattern);
             }
         });
-        
+
         return Array.from(tags).slice(0, 5); // Limit to 5 tags
     }
 
@@ -301,7 +301,7 @@ class PromptBrowser {
         const wordCount = content.split(/\s+/).length;
         const codeBlocks = (content.match(/```/g) || []).length / 2;
         const headingCount = (content.match(/^#+\s/gm) || []).length;
-        
+
         // Simple heuristic based on length and complexity
         if (wordCount < 500 || (codeBlocks === 0 && headingCount < 5)) {
             return 'Beginner';
@@ -317,7 +317,7 @@ class PromptBrowser {
         this.prompts.forEach(prompt => {
             categoryCount[prompt.category] = (categoryCount[prompt.category] || 0) + 1;
         });
-        
+
         this.categories = Object.keys(categoryCount).map(name => ({
             id: name,
             name: name.charAt(0).toUpperCase() + name.slice(1),
@@ -339,7 +339,7 @@ class PromptBrowser {
             featured: true,
             filename: 'sample.md'
         }];
-        
+
         this.filteredPrompts = [...this.prompts];
         this.generateCategories();
     }
@@ -347,11 +347,11 @@ class PromptBrowser {
     filterPrompts() {
         this.filteredPrompts = this.prompts.filter(prompt => {
             const matchesCategory = this.currentCategory === 'all' || prompt.category === this.currentCategory;
-            const matchesSearch = this.searchQuery === '' || 
+            const matchesSearch = this.searchQuery === '' ||
                 prompt.title.toLowerCase().includes(this.searchQuery) ||
                 prompt.description.toLowerCase().includes(this.searchQuery) ||
                 prompt.tags.some(tag => tag.toLowerCase().includes(this.searchQuery));
-            
+
             return matchesCategory && matchesSearch;
         });
 
@@ -390,22 +390,22 @@ class PromptBrowser {
         const truncatedContent = prompt.content.substring(0, 150) + '...';
         const difficultyColor = {
             'beginner': 'var(--success)',
-            'intermediate': 'var(--warning)', 
+            'intermediate': 'var(--warning)',
             'advanced': 'var(--error)'
         };
 
         return `
-            <div class="prompt-card ${prompt.featured ? 'featured' : ''}" data-id="${prompt.id}">
+            <div class="prompt-card ${prompt.featured ? 'featured' : ''}" data-id="${this.escapeHtml(prompt.id)}">
                 <div class="prompt-category">
-                    <span class="badge badge-${prompt.category}">${prompt.category}</span>
+                    <span class="badge badge-${this.escapeHtml(prompt.category)}">${this.escapeHtml(prompt.category)}</span>
                 </div>
                 
                 <div class="prompt-content">
-                    <h3 class="prompt-title">${prompt.title}</h3>
-                    <p class="prompt-description">${prompt.description}</p>
+                    <h3 class="prompt-title">${this.escapeHtml(prompt.title)}</h3>
+                    <p class="prompt-description">${this.escapeHtml(prompt.description)}</p>
                     
                     <div class="prompt-preview">
-                        ${truncatedContent}
+                        ${this.escapeHtml(truncatedContent)}
                     </div>
                     
                     <div class="prompt-meta">
@@ -414,7 +414,7 @@ class PromptBrowser {
                                 <circle cx="12" cy="12" r="10"/>
                                 <polyline points="12,6 12,12 16,14"/>
                             </svg>
-                            <span>${prompt.readingTime}</span>
+                            <span>${this.escapeHtml(prompt.readingTime)}</span>
                         </div>
                         <div class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -424,7 +424,7 @@ class PromptBrowser {
                                 <line x1="16" y1="17" x2="8" y2="17"/>
                                 <polyline points="10,9 9,9 8,9"/>
                             </svg>
-                            <span>${prompt.wordCount} words</span>
+                            <span>${this.escapeHtml(prompt.wordCount)} words</span>
                         </div>
                         <div class="meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -472,7 +472,7 @@ class PromptBrowser {
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
-            
+
             setTimeout(() => {
                 card.style.transition = 'all 0.5s ease';
                 card.style.opacity = '1';
@@ -500,7 +500,7 @@ class PromptBrowser {
 
     setActiveCategory(category) {
         this.currentCategory = category;
-        
+
         // Update UI
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -510,13 +510,13 @@ class PromptBrowser {
 
     setActiveView(view) {
         this.currentView = view;
-        
+
         // Update UI
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`[data-view="${view}"]`).classList.add('active');
-        
+
         // Update grid class
         const grid = document.getElementById('prompts-grid');
         if (view === 'list') {
@@ -529,7 +529,7 @@ class PromptBrowser {
     updateSearchClear() {
         const searchClear = document.getElementById('search-clear');
         const searchInput = document.getElementById('search-input');
-        
+
         if (searchInput.value.length > 0) {
             searchClear.style.display = 'block';
         } else {
@@ -539,7 +539,9 @@ class PromptBrowser {
 
     async quickCopy(promptId) {
         const prompt = this.prompts.find(p => p.id === promptId);
-        if (!prompt) return;
+        if (!prompt) {
+            return;
+        }
 
         try {
             await navigator.clipboard.writeText(prompt.content);
@@ -560,13 +562,13 @@ class PromptBrowser {
         }
     }
 
-    showToast(message, type = 'success') {
+    showToast(message) {
         const toast = document.getElementById('copy-toast');
         const span = toast.querySelector('span');
-        
+
         span.textContent = message;
         toast.classList.add('show');
-        
+
         setTimeout(() => {
             toast.classList.remove('show');
         }, 3000);
@@ -575,8 +577,10 @@ class PromptBrowser {
     initMobileMenu() {
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
-        
-        if (!navToggle || !navMenu) return;
+
+        if (!navToggle || !navMenu) {
+            return;
+        }
 
         navToggle.addEventListener('click', () => {
             navToggle.classList.toggle('active');
@@ -627,7 +631,7 @@ class PromptBrowser {
     /**
      * Show loading error to users with retry option
      */
-    showLoadingError(filename, error) {
+    showLoadingError() {
         const grid = document.getElementById('prompts-grid');
         if (!grid.querySelector('.error-notification')) {
             const errorDiv = document.createElement('div');
@@ -657,13 +661,19 @@ class PromptBrowser {
     getGitHubToken() {
         // For public repositories, GitHub API works without token (with rate limits)
         // For private repos or higher rate limits, use environment variables
-        if (typeof process !== 'undefined' && process.env && process.env.GITHUB_TOKEN) {
-            return process.env.GITHUB_TOKEN;
+        if (typeof window !== 'undefined' && window.GITHUB_TOKEN) {
+            return window.GITHUB_TOKEN;
         }
-        
-        // For development/testing - remove this in production!
+
         // GitHub API works without token for public repos (60 requests/hour per IP)
         return null;
+    }
+
+    // HTML 이스케이프 함수 - XSS 공격 방지
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     // Utility functions
@@ -694,27 +704,30 @@ class PromptBrowser {
 }
 
 // Global functions for inline event handlers
-function clearSearch() {
+// Global functions for HTML onclick handlers
+window.clearSearch = function() {
     const searchInput = document.getElementById('search-input');
     searchInput.value = '';
-    promptBrowser.searchQuery = '';
-    promptBrowser.filterPrompts();
-    promptBrowser.renderPrompts();
-    promptBrowser.updateSearchClear();
-}
+    if (window.promptBrowser) {
+        window.promptBrowser.searchQuery = '';
+        window.promptBrowser.filterPrompts();
+        window.promptBrowser.renderPrompts();
+        window.promptBrowser.updateSearchClear();
+    }
+};
 
-function filterCategory(category) {
-    promptBrowser.setActiveCategory(category);
-    promptBrowser.filterPrompts();
-    promptBrowser.renderPrompts();
-}
+window.filterCategory = function(category) {
+    if (window.promptBrowser) {
+        window.promptBrowser.setActiveCategory(category);
+        window.promptBrowser.filterPrompts();
+        window.promptBrowser.renderPrompts();
+    }
+};
 
 // Initialize the application
-let promptBrowser;
-
 document.addEventListener('DOMContentLoaded', () => {
-    promptBrowser = new PromptBrowser();
-    
+    window.promptBrowser = new PromptBrowser();
+
     // Add loading animation
     const loadingContainer = document.querySelector('.loading-container');
     if (loadingContainer) {
@@ -725,6 +738,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 300);
         }, 1000);
     }
-    
-    console.log('🌟 Stella Open Prompt Browser initialized successfully!');
+
+    console.log('🌟 Stella Prompt Hub Browser initialized successfully!');
 });

@@ -9,7 +9,7 @@ class PromptReader {
         this.tocItems = [];
         this.isLoading = false;
         this.observer = null;
-        
+
         this.init();
     }
 
@@ -98,20 +98,20 @@ class PromptReader {
         try {
             // Construct filename from prompt ID
             const filename = promptId.endsWith('.md') ? promptId : `${promptId}.md`;
-            
+
             // Load markdown content directly
             const contentResponse = await fetch(`prompts/${filename}`);
-            
+
             if (!contentResponse.ok) {
                 throw new Error(`Prompt not found: ${filename}`);
             }
-            
+
             const markdownContent = await contentResponse.text();
 
             // Parse basic metadata from the markdown content
             this.currentPrompt = this.parsePromptMetadata(promptId, markdownContent);
             this.renderPrompt();
-            
+
         } catch (error) {
             console.error('Error loading prompt:', error);
             this.showError('Failed to load prompt. Please check that the prompt file exists.');
@@ -124,18 +124,18 @@ class PromptReader {
         // Extract title from first # heading
         const titleMatch = content.match(/^#\s+(.+)$/m);
         const title = titleMatch ? titleMatch[1] : promptId.replace(/-/g, ' ');
-        
+
         // Extract description from overview section
         const overviewMatch = content.match(/## Overview\s*\n\n(.+?)(?=\n\n|\n#|$)/s);
         const description = overviewMatch ? overviewMatch[1].trim() : '';
-        
+
         // Determine category from content
         const category = this.inferCategory(content);
-        
+
         // Estimate reading time
         const wordCount = content.split(/\s+/).length;
         const readTime = Math.max(1, Math.ceil(wordCount / 200));
-        
+
         return {
             id: promptId,
             title,
@@ -149,7 +149,7 @@ class PromptReader {
 
     inferCategory(content) {
         const contentLower = content.toLowerCase();
-        
+
         if (contentLower.includes('writing') || contentLower.includes('story')) {
             return 'writing';
         } else if (contentLower.includes('code') || contentLower.includes('programming')) {
@@ -166,7 +166,9 @@ class PromptReader {
     }
 
     renderPrompt() {
-        if (!this.currentPrompt) return;
+        if (!this.currentPrompt) {
+            return;
+        }
 
         // Update page title and meta
         document.title = `${this.currentPrompt.title} - Stella Open Prompt`;
@@ -209,13 +211,13 @@ class PromptReader {
 
         // Custom renderer for code blocks with copy buttons
         const renderer = new marked.Renderer();
-        
+
         renderer.code = function(code, lang) {
             const language = lang || 'text';
-            const escapedCode = this.options.highlight ? 
-                this.options.highlight(code, language) : 
+            const escapedCode = this.options.highlight ?
+                this.options.highlight(code, language) :
                 this.escapeHtml(code);
-                
+
             return `<div class="code-block">
                 <div class="code-header">
                     <span class="code-language">${language}</span>
@@ -236,7 +238,7 @@ class PromptReader {
 
         // Parse markdown with custom renderer
         const html = marked.parse(markdown, { renderer });
-        
+
         return html;
     }
 
@@ -244,14 +246,14 @@ class PromptReader {
         const contentContainer = document.getElementById('prompt-content');
         const headers = contentContainer.querySelectorAll('h1, h2, h3');
         const tocContainer = document.getElementById('toc-list');
-        
+
         this.tocItems = [];
         tocContainer.innerHTML = '';
 
-        headers.forEach((header, index) => {
+        headers.forEach((header) => {
             const id = this.createSlug(header.textContent);
             header.id = id;
-            
+
             const level = parseInt(header.tagName.charAt(1));
             const tocItem = {
                 id,
@@ -259,7 +261,7 @@ class PromptReader {
                 level,
                 element: header
             };
-            
+
             this.tocItems.push(tocItem);
 
             // Create TOC link
@@ -318,9 +320,9 @@ class PromptReader {
         const contentHeight = contentContainer.scrollHeight;
         const elementTop = element.offsetTop;
         const windowHeight = window.innerHeight;
-        
+
         const progress = Math.min(100, (elementTop / (contentHeight - windowHeight)) * 100);
-        
+
         const progressBar = document.querySelector('.reading-progress');
         if (progressBar) {
             progressBar.style.width = `${Math.max(0, progress)}%`;
@@ -330,7 +332,7 @@ class PromptReader {
     scrollToSection(href) {
         const targetId = href.substring(1);
         const targetElement = document.getElementById(targetId);
-        
+
         if (targetElement) {
             const headerOffset = 100;
             const elementPosition = targetElement.offsetTop;
@@ -350,17 +352,17 @@ class PromptReader {
         let textToCopy = '';
 
         switch (action) {
-            case 'full':
-                textToCopy = this.currentPrompt.content;
-                break;
-            case 'link':
-                textToCopy = window.location.href;
-                break;
-            case 'title':
-                textToCopy = this.currentPrompt.title;
-                break;
-            default:
-                textToCopy = this.currentPrompt.content;
+        case 'full':
+            textToCopy = this.currentPrompt.content;
+            break;
+        case 'link':
+            textToCopy = window.location.href;
+            break;
+        case 'title':
+            textToCopy = this.currentPrompt.title;
+            break;
+        default:
+            textToCopy = this.currentPrompt.content;
         }
 
         await this.copyToClipboard(textToCopy);
@@ -394,7 +396,7 @@ class PromptReader {
         const originalText = button.textContent;
         button.textContent = 'Copied!';
         button.classList.add('copied');
-        
+
         setTimeout(() => {
             button.textContent = originalText;
             button.classList.remove('copied');
@@ -402,7 +404,9 @@ class PromptReader {
     }
 
     downloadPrompt() {
-        if (!this.currentPrompt) return;
+        if (!this.currentPrompt) {
+            return;
+        }
 
         const blob = new Blob([this.currentPrompt.content], { type: 'text/markdown' });
         const url = URL.createObjectURL(blob);
@@ -442,7 +446,7 @@ class PromptReader {
     searchContent(query) {
         const contentContainer = document.getElementById('prompt-content');
         const content = contentContainer.innerHTML;
-        
+
         if (!query.trim()) {
             // Clear highlights
             contentContainer.innerHTML = content.replace(/<mark class="search-highlight">(.*?)<\/mark>/g, '$1');
@@ -487,12 +491,12 @@ class PromptReader {
         if (breadcrumbsContainer && this.currentPrompt) {
             const categoryLink = breadcrumbsContainer.querySelector('.breadcrumb-category');
             const titleSpan = breadcrumbsContainer.querySelector('.breadcrumb-title');
-            
+
             if (categoryLink) {
                 categoryLink.textContent = this.currentPrompt.category;
                 categoryLink.href = `browse.html?category=${this.currentPrompt.category}`;
             }
-            
+
             if (titleSpan) {
                 titleSpan.textContent = this.currentPrompt.title;
             }
@@ -500,27 +504,35 @@ class PromptReader {
     }
 
     updateMetadata() {
-        if (!this.currentPrompt) return;
+        if (!this.currentPrompt) {
+            return;
+        }
 
         // Update header metadata
         const titleElement = document.querySelector('.prompt-title');
         const categoryElement = document.querySelector('.prompt-category');
         const descriptionElement = document.querySelector('.prompt-description');
 
-        if (titleElement) titleElement.textContent = this.currentPrompt.title;
+        if (titleElement) {
+            titleElement.textContent = this.currentPrompt.title;
+        }
         if (categoryElement) {
             categoryElement.textContent = this.currentPrompt.category;
             categoryElement.className = `prompt-category category-${this.currentPrompt.category.toLowerCase()}`;
         }
-        if (descriptionElement) descriptionElement.textContent = this.currentPrompt.description;
+        if (descriptionElement) {
+            descriptionElement.textContent = this.currentPrompt.description;
+        }
     }
 
     updateSidebarMetadata() {
-        if (!this.currentPrompt) return;
+        if (!this.currentPrompt) {
+            return;
+        }
 
         const sidebar = document.querySelector('.sidebar');
         const metadataSection = sidebar.querySelector('.prompt-metadata');
-        
+
         if (metadataSection) {
             metadataSection.innerHTML = `
                 <div class="metadata-item">
@@ -547,7 +559,7 @@ class PromptReader {
         // Handle responsive layout changes
         const sidebar = document.querySelector('.sidebar');
         const content = document.querySelector('.content');
-        
+
         if (window.innerWidth <= 768) {
             sidebar.classList.add('mobile');
             content.classList.add('mobile');
@@ -560,14 +572,14 @@ class PromptReader {
     showLoading(show) {
         const loadingElement = document.querySelector('.loading-indicator');
         const contentElement = document.querySelector('.main-content');
-        
+
         if (loadingElement) {
             loadingElement.style.display = show ? 'block' : 'none';
         }
         if (contentElement) {
             contentElement.style.display = show ? 'none' : 'block';
         }
-        
+
         this.isLoading = show;
     }
 
@@ -590,13 +602,13 @@ class PromptReader {
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.classList.add('show');
         }, 10);
-        
+
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => {
@@ -621,7 +633,9 @@ class PromptReader {
     }
 
     formatDate(dateString) {
-        if (!dateString) return 'Unknown';
+        if (!dateString) {
+            return 'Unknown';
+        }
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -635,8 +649,3 @@ class PromptReader {
 document.addEventListener('DOMContentLoaded', () => {
     new PromptReader();
 });
-
-// Export for module usage
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = PromptReader;
-}

@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stella Prompt Hub - Browse Prompts</title>
     <meta name="description" content="Discover curated AI prompts to enhance your productivity and creativity. Browse our collection of writing, development, analysis, and creative prompts.">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="src/css/shared.css">
     <link rel="stylesheet" href="src/css/browse.css">
     <link rel="stylesheet" href="src/css/utilities.css">
-    
+
     <!-- Favicon -->
     <link rel="icon" href="Refer/Images/Stella_Icon.png">
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -28,7 +28,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Stella Prompt Hub">
     <link rel="apple-touch-icon" href="Refer/Images/Stella_Icon.png">
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Stella Prompt Hub - Browse Prompts">
     <meta property="og:description" content="Discover curated AI prompts to enhance your productivity and creativity.">
@@ -37,7 +37,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="main-nav" id="main-nav">
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
         <div class="nav-container">
             <a href="browse.html" class="nav-brand">
                 <img src="Refer/Images/Stella_Icon.png" alt="Stella Logo" class="nav-logo">
@@ -47,7 +47,7 @@
                 <a href="browse.html" class="nav-link active">Browse Prompts</a>
                 <a href="#about" class="nav-link">About</a>                        <a href="https://github.com/Hyoni1129/Stella-Prompt-Hub" class="nav-link">GitHub</a>
             </div>
-            <button class="nav-toggle" id="nav-toggle">
+            <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -60,7 +60,7 @@
         <div class="hero-background">
             <div class="hero-overlay"></div>
         </div>
-        
+
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title">
@@ -70,7 +70,7 @@
                 <p class="hero-subtitle">
                     Curated prompts to enhance your AI interactions and unlock creativity
                 </p>
-                
+
                 <!-- Search Bar -->
                 <div class="search-container">
                     <div class="search-bar">
@@ -79,7 +79,7 @@
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
                         <input type="text" id="search-input" placeholder="Search prompts..." autocomplete="off">
-                        <button class="search-clear" id="search-clear" style="display: none;">
+                        <button class="search-clear" id="search-clear" type="button" style="display: none;" aria-label="Clear search">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -87,27 +87,27 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Category Filters -->
                 <div class="filters-container">
                     <div class="filter-buttons">
-                        <button class="filter-btn active" data-category="all">
+                        <button class="filter-btn active" data-category="all" type="button">
                             <span>All</span>
                             <span class="filter-count" id="count-all">0</span>
                         </button>
-                        <button class="filter-btn" data-category="writing">
+                        <button class="filter-btn" data-category="writing" type="button">
                             <span>Writing</span>
                             <span class="filter-count" id="count-writing">0</span>
                         </button>
-                        <button class="filter-btn" data-category="development">
+                        <button class="filter-btn" data-category="development" type="button">
                             <span>Development</span>
                             <span class="filter-count" id="count-development">0</span>
                         </button>
-                        <button class="filter-btn" data-category="analysis">
+                        <button class="filter-btn" data-category="analysis" type="button">
                             <span>Analysis</span>
                             <span class="filter-count" id="count-analysis">0</span>
                         </button>
-                        <button class="filter-btn" data-category="creative">
+                        <button class="filter-btn" data-category="creative" type="button">
                             <span>Creative</span>
                             <span class="filter-count" id="count-creative">0</span>
                         </button>
@@ -126,7 +126,7 @@
                     <span id="results-count">Loading prompts...</span>
                 </div>
                 <div class="view-toggle">
-                    <button class="view-btn active" data-view="grid" title="Grid view">
+                    <button class="view-btn active" data-view="grid" title="Grid view" type="button" aria-label="Switch to grid view">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="7" height="7"></rect>
                             <rect x="14" y="3" width="7" height="7"></rect>
@@ -134,7 +134,7 @@
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
                     </button>
-                    <button class="view-btn" data-view="list" title="List view">
+                    <button class="view-btn" data-view="list" title="List view" type="button" aria-label="Switch to list view">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="8" y1="6" x2="21" y2="6"></line>
                             <line x1="8" y1="12" x2="21" y2="12"></line>
@@ -166,7 +166,7 @@
                 </div>
                 <h3>No prompts found</h3>
                 <p>Try adjusting your search terms or category filters.</p>
-                <button class="btn btn-primary" onclick="clearSearch()">Clear Search</button>
+                <button class="btn btn-primary" type="button" onclick="clearSearch()">Clear Search</button>
             </div>
         </div>
     </main>
@@ -178,7 +178,7 @@
                 <h2>About Stella Prompt Hub</h2>
                 <div class="about-grid">
                     <div class="about-item">
-                        <h3>📁 Simple & Static</h3>
+                        <h3>📁 Simple &amp; Static</h3>
                         <p>No servers, no databases, no complex setup. Just drop Markdown files into the <code>prompts/</code> folder and they automatically appear on the site.</p>
                     </div>
                     <div class="about-item">
@@ -209,7 +209,7 @@
                     <img src="Refer/Images/Stella_Text_icon.png" alt="Stella" class="footer-logo">
                     <p>Open Prompt Hub - Curated prompts for enhanced AI interactions</p>
                 </div>
-                
+
                 <div class="footer-links">
                     <div class="footer-column">
                         <h4>Prompts</h4>
@@ -218,7 +218,7 @@
                         <a href="#" onclick="filterCategory('analysis')">Analysis</a>
                         <a href="#" onclick="filterCategory('creative')">Creative</a>
                     </div>
-                    
+
                     <div class="footer-column">
                         <h4>Stella</h4>
                         <a href="Refer/introduction.html">Home</a>
@@ -226,7 +226,7 @@
                         <a href="Refer/introduction.html#about">About</a>
                         <a href="Refer/introduction.html#support">Support</a>
                     </div>
-                    
+
                     <div class="footer-column">
                         <h4>Resources</h4>
                         <a href="#" onclick="window.print()">Print Collection</a>
@@ -236,7 +236,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
                 <p>&copy; 2025 Stella Prompt Hub. Part of the Stella ecosystem.</p>
                 <div class="footer-bottom-links">
@@ -248,7 +248,7 @@
     </footer>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Back to top">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m18 15-6-6-6 6"/>
         </svg>

@@ -5,25 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prompt Reader - Stella Prompt Hub</title>
     <meta name="description" content="Read and interact with curated AI prompts. Copy, download, and navigate through comprehensive prompt content.">
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="src/css/shared.css">
     <link rel="stylesheet" href="src/css/prompt-reader.css">
     <link rel="stylesheet" href="src/css/utilities.css">
-    
+
     <!-- Syntax Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-    
+
     <!-- Favicon -->
     <link rel="icon" href="Refer/Images/Stella_Icon.png">
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -31,7 +31,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Stella Prompt Hub">
     <link rel="apple-touch-icon" href="Refer/Images/Stella_Icon.png">
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Prompt Reader - Stella Prompt Hub">
     <meta property="og:description" content="Read and interact with curated AI prompts.">
@@ -40,7 +40,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="main-nav" id="main-nav">
+    <nav class="main-nav" id="main-nav" aria-label="Main navigation">
         <div class="nav-container">
             <a href="browse.html" class="nav-brand">
                 <img src="Refer/Images/Stella_Icon.png" alt="Stella Logo" class="nav-logo">
@@ -50,7 +50,7 @@
                 <a href="browse.html" class="nav-link">Browse Prompts</a>
                 <a href="#about" class="nav-link">About</a>                        <a href="https://github.com/Hyoni1129/Stella-Prompt-Hub" class="nav-link">GitHub</a>
             </div>
-            <button class="nav-toggle" id="nav-toggle">
+            <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -59,14 +59,12 @@
     </nav>
 
     <!-- Progress Bar -->
-    <div class="reading-progress">
-        <div class="progress-bar" id="progress-bar"></div>
-    </div>
+    <progress class="reading-progress" id="reading-progress" value="0" max="100" aria-label="Reading progress"></progress>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" aria-label="Prompt content and reader interface">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar" aria-label="Document navigation and information">
             <div class="sidebar-content">
                 <!-- Document Info -->
                 <div class="document-info">
@@ -117,7 +115,7 @@
                         </svg>
                         Contents
                     </h3>
-                    <nav class="toc-nav" id="toc-nav">
+                    <nav class="toc-nav" id="toc-nav" aria-label="Table of contents">
                         <!-- TOC will be generated dynamically -->
                     </nav>
                 </div>
@@ -126,15 +124,15 @@
                 <div class="action-panel">
                     <h3 class="action-title">Actions</h3>
                     <div class="action-buttons">
-                        <button class="action-btn action-btn-primary" id="copy-full-btn">
+                        <button class="action-btn action-btn-primary" id="copy-full-btn" type="button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                             </svg>
                             Copy Full Prompt
                         </button>
-                        
-                        <button class="action-btn action-btn-secondary" id="download-btn">
+
+                        <button class="action-btn action-btn-secondary" id="download-btn" type="button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7,10 12,15 17,10"/>
@@ -142,8 +140,8 @@
                             </svg>
                             Download Markdown
                         </button>
-                        
-                        <button class="action-btn action-btn-secondary" id="share-btn">
+
+                        <button class="action-btn action-btn-secondary" id="share-btn" type="button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="18" cy="5" r="3"/>
                                 <circle cx="6" cy="12" r="3"/>
@@ -153,8 +151,8 @@
                             </svg>
                             Share Link
                         </button>
-                        
-                        <button class="action-btn action-btn-secondary" id="print-btn">
+
+                        <button class="action-btn action-btn-secondary" id="print-btn" type="button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6,9 6,2 18,2 18,9"/>
                                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -167,7 +165,7 @@
             </div>
 
             <!-- Sidebar Toggle for Mobile -->
-            <button class="sidebar-toggle" id="sidebar-toggle">
+            <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Toggle sidebar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="3" y1="6" x2="21" y2="6"/>
                     <line x1="3" y1="12" x2="21" y2="12"/>
@@ -207,7 +205,7 @@
     </div>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Back to top">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m18 15-6-6-6 6"/>
         </svg>
@@ -216,7 +214,7 @@
     <!-- JavaScript -->
     <!-- Marked.js for markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
-    
+
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>

@@ -10,19 +10,38 @@
 /* Reading Progress Bar */
 .reading-progress {
     position: fixed;
-    top: 72px;
+    top: 0;
     left: 0;
-    right: 0;
+    width: 100%;
     height: 3px;
-    background: var(--gray-200);
-    z-index: var(--z-nav);
+    z-index: 1000;
+    background: transparent;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
+.reading-progress::-webkit-progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.reading-progress::-webkit-progress-value {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    transition: width 0.1s ease;
+}
+
+.reading-progress::-moz-progress-bar {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    transition: width 0.1s ease;
+}
+
+/* Fallback for browsers that don't support progress styling */
 .progress-bar {
     height: 100%;
-    background: var(--gradient-primary);
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
     width: 0%;
-    transition: width 0.3s ease;
+    transition: width 0.1s ease;
 }
 
 /* Sidebar */
